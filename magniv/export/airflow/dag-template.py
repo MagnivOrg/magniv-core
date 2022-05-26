@@ -15,7 +15,7 @@ def callback_post(callback_type, context):
             "callback_type": callback_type,
             "task_id": context["task"].task_id,
             "run_id": context["run_id"],
-            "dag_id": context["dag"].dag_id,
+            "id": dag_id,
         },
     )
 
