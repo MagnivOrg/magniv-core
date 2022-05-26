@@ -38,4 +38,6 @@ with dag:
         namespace="default",
         image=imagetoreplace,
         cmds=["magniv-cli", "run", "filetoreplace", "functiontoreplace"],
+        on_failure_callback=failuretoreplace,
+        on_success_callback=successtoreplace,
     )
