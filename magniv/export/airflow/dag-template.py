@@ -3,14 +3,32 @@ from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
 from datetime import datetime
+import requests
 
 default_args = {"owner": ownertoreplace, "start_date": datetime.now()}
+
+
+def callback_post(callback_type, context):
+    requests.post(
+        callbackhooktoreplace, json={"callback_type": callback_type, "context": context}
+    )
+
+
+def _on_success(context):
+    callback_post("success", context)
+
+
+def _on_failure(context):
+    callback_post("failure", context)
+
 
 dag = DAG(
     dag_id,
     schedule_interval=scheduletoreplace,
     default_args=default_args,
     catchup=False,
+    on_success_callback=successtoreplace,
+    on_failsure_callback=failuretoreplace,
 )
 
 with dag:

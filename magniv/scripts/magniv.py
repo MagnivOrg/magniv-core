@@ -18,9 +18,13 @@ def build():
 @click.option("--gcp", is_flag=True)  # GCP creeates the dockerfiles and cloubuild.yaml
 @click.option("--gcp-project-id")
 @click.option("--gcp-dag-folder")
-def export(gcp, gcp_project_id, gcp_dag_folder):
+@click.option("--callback-hook")
+def export(gcp, gcp_project_id, gcp_dag_folder, callback_hook):
     return m_export(
-        gcp=gcp, gcp_project_id=gcp_project_id, gcp_dag_folder=gcp_dag_folder
+        gcp=gcp,
+        gcp_project_id=gcp_project_id,
+        gcp_dag_folder=gcp_dag_folder,
+        callback_hook=callback_hook,
     )
 
 

@@ -6,7 +6,9 @@ from io import BytesIO
 from magniv.utils.utils import _create_cloud_build
 
 
-def export_to_airflow(task_list, gcp=False, gcp_project_id=None, gcp_dag_folder=None):
+def export_to_airflow(
+    task_list, gcp=False, gcp_project_id=None, gcp_dag_folder=None, callback_hook=None
+):
     dag_template_filename = "dag-template.py"
     dag_template_directory = "{}/{}".format(
         os.path.dirname(__file__), dag_template_filename
@@ -21,6 +23,7 @@ def export_to_airflow(task_list, gcp=False, gcp_project_id=None, gcp_dag_folder=
         if not os.path.exists("dags/{}/".format(task_info["owner"])):
             os.mkdir("dags/{}/".format(task_info["owner"]))
         shutil.copyfile(dag_template_directory, new_filename)
+        print("creating docker image ... ")
         docker_name, path = _create_docker_image(
             task_info["python_version"],
             task_info["requirements_location"],
@@ -28,7 +31,9 @@ def export_to_airflow(task_list, gcp=False, gcp_project_id=None, gcp_dag_folder=
             gcp=gcp,
             gcp_project_id=gcp_project_id,
         )
+        print("docker image created!")
         docker_image_info.append((docker_name, path))
+        print("creating dag ... ")
         with fileinput.input(new_filename, inplace=True) as f:
             for line in f:
                 line = (
@@ -38,8 +43,23 @@ def export_to_airflow(task_list, gcp=False, gcp_project_id=None, gcp_dag_folder=
                     .replace("imagetoreplace", "'{}'".format(docker_name))
                     .replace("filetoreplace", task_info["location"])
                     .replace("functiontoreplace", task_info["name"])
+                    .replace(
+                        "callbackhooktoreplace",
+                        "'{}'".format(callback_hook)
+                        if callback_hook != None
+                        else "None",
+                    )
+                    .replace(
+                        "successtoreplace",
+                        "_on_success" if callback_hook != None else "None",
+                    )
+                    .replace(
+                        "failuretoreplace",
+                        "_on_failure" if callback_hook != None else "None",
+                    )
                 )
                 print(line, end="")
+        print("dag created!")
     if gcp:
         _create_cloud_build(docker_image_info, gcp_dag_folder)
 
