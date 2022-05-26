@@ -10,7 +10,7 @@ default_args = {"owner": ownertoreplace, "start_date": datetime.now()}
 
 def callback_post(callback_type, context):
     requests.post(
-        callbackhooktoreplace, json={"callback_type": callback_type, "context": context}
+        callbackhooktoreplace, json={"callback_type": callback_type, "context": repr(context)}
     )
 
 
