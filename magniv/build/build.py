@@ -6,14 +6,16 @@ from magniv.utils.utils import _save_to_json
 import importlib.util
 import hashlib
 import platform
-import json
 import sys
+
 
 def _get_python_version(root):
     return platform.python_version()
 
+
 def _get_owner(root):
     return "local"
+
 
 def build():
     is_task = lambda x: isinstance(x, Task)
@@ -21,9 +23,7 @@ def build():
     used_keys = {}
     root_req = None
     if not os.path.exists("./tasks"):
-        raise EnvironmentError(
-            "You must have a tasks folder that contains all of your tasks files"
-        )
+        raise OSError("You must have a tasks folder that contains all of your tasks files")
 
     # Hack to fix project imports by adding project directory to Python path
     sys.path.append(os.getcwd() + "/tasks")
@@ -48,7 +48,7 @@ def build():
                     else root_req
                 )
                 if req == None:
-                    raise EnvironmentError(
+                    raise OSError(
                         f'requirements.txt not found for path "{root}", either add one to this directory or the root directory'
                     )
                 for name, t in tasks:
@@ -68,7 +68,7 @@ def build():
                         "python_version": _get_python_version(root),
                         "owner": _get_owner(root),
                         "requirements_location": req,
-                        "line_number": lineno
+                        "line_number": lineno,
                     }
                     tasks_list.append(info)
         _save_to_json(tasks_list, filepath="./dump.json")

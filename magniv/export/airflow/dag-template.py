@@ -1,9 +1,8 @@
-from airflow import DAG
-from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
-    KubernetesPodOperator,
-)
 from datetime import datetime
+
 import requests
+from airflow import DAG
+from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 
 default_args = {"owner": ownertoreplace, "start_date": datetime.now()}
 
