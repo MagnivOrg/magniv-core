@@ -20,12 +20,14 @@ def build():
 @click.option("--gcp-project-id")
 @click.option("--gcp-dag-folder")
 @click.option("--callback-hook")
-def export(gcp, gcp_project_id, gcp_dag_folder, callback_hook):
+@click.option("--env-file-path")
+def export(gcp, gcp_project_id, gcp_dag_folder, callback_hook, env_file_path):
     return m_export(
         gcp=gcp,
         gcp_project_id=gcp_project_id,
         gcp_dag_folder=gcp_dag_folder,
         callback_hook=callback_hook,
+        env_file_path=env_file_path,
     )
 
 
