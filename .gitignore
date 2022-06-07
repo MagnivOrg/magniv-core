@@ -137,5 +137,4 @@ dump.json
 .DS_Store
 
 dist/
-setup.py
 instructions.md
