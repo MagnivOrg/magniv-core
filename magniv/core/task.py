@@ -15,7 +15,7 @@ class Task:
     :param key: the unique key that will reference the function, default is the function of the name
     """
 
-    CRON_PATTERN = r"(@(annually|yearly|monthly|weekly|daily|hourly))|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})"
+    CRON_PATTERN = r"(^((\*\/)?([1-5]?[0-9])((\,|\-|\/)\d+)*|\*)\s((\*\/)?((2[0-3]|1[0-9]|[0-9]))((\,|\-|\/)\d+)*|\*)\s((\*\/)?([1-9]|[12][0-9]|3[01])((\,|\-|\/)\d+)*|\*)\s((\*\/)?([1-9]|1[0-2])((\,|\-|\/)\d+)*|\*)\s((\*\/)?[0-6]((\,|\-|\/)\d+)*|\*)$)|@(annually|yearly|monthly|weekly|daily|hourly|reboot)"
     KEY_PATTERN = r"^[\w\-.]+$"
 
     def __init__(self, function, schedule=None, description=None, key=None) -> None:
