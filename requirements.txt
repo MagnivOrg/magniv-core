@@ -1,0 +1,4 @@
+apache-airflow==2.3.2
+click==8.0.4
+docker_py==1.10.6
+requests==2.27.1

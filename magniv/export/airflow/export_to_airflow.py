@@ -1,18 +1,15 @@
+import fileinput
 import os
 import shutil
-import fileinput
+
 import docker
-from io import BytesIO
+
 from magniv.utils.utils import _create_cloud_build
 
 
-def export_to_airflow(
-    task_list, gcp=False, gcp_project_id=None, gcp_dag_folder=None, callback_hook=None
-):
+def export_to_airflow(task_list, gcp=False, gcp_project_id=None, gcp_dag_folder=None, callback_hook=None):
     dag_template_filename = "dag-template.py"
-    dag_template_directory = "{}/{}".format(
-        os.path.dirname(__file__), dag_template_filename
-    )
+    dag_template_directory = "{}/{}".format(os.path.dirname(__file__), dag_template_filename)
     docker_image_info = []
     for task_info in task_list:
         print("starting task .... ")
@@ -45,9 +42,7 @@ def export_to_airflow(
                     .replace("functiontoreplace", task_info["name"])
                     .replace(
                         "callbackhooktoreplace",
-                        "'{}'".format(callback_hook)
-                        if callback_hook != None
-                        else "None",
+                        "'{}'".format(callback_hook) if callback_hook != None else "None",
                     )
                     .replace(
                         "successtoreplace",
@@ -64,9 +59,7 @@ def export_to_airflow(
         _create_cloud_build(docker_image_info, gcp_dag_folder)
 
 
-def _create_docker_image(
-    python_version, requirements, key, gcp=False, gcp_project_id=None
-):
+def _create_docker_image(python_version, requirements, key, gcp=False, gcp_project_id=None):
     path = "/".join(requirements.split("/")[:-1])
     if not gcp:
         requirements = "requirements.txt"

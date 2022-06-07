@@ -54,14 +54,10 @@ class Task:
 def task(_func=None, *, schedule=None, description=None, key=None) -> Callable:
     if _func is not None:  # this means they did not pass in any arguments like @magniv
         # The reason we do this here is bc in the case they dont pass arguments we dont nee dthe extra wrapper below.
-        raise ValueError(
-            "You must use arguments with magniv, it can not be called alone"
-        )
+        raise ValueError("You must use arguments with magniv, it can not be called alone")
 
     def wrapper(function):
-        task_instance = Task(
-            function, schedule=schedule, description=description, key=key
-        )
+        task_instance = Task(function, schedule=schedule, description=description, key=key)
         return task_instance
 
     return wrapper

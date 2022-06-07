@@ -1,5 +1,4 @@
 import json
-import os
 
 
 def _save_to_json(obj, filepath):
@@ -8,7 +7,7 @@ def _save_to_json(obj, filepath):
 
 
 def _get_tasks_json(filepath):
-    with open(filepath, "r") as fo:
+    with open(filepath) as fo:
         task_list = json.load(fo)
     return task_list
 
@@ -39,6 +38,4 @@ def _create_cloud_build(docker_image_info, gcp_dag_folder):
                     gcp_image_name, path
                 )
             )
-        fo.write(
-            "\nimages: [{}]".format(",".join(f"'{image}'" for image in gcp_image_names))
-        )
+        fo.write("\nimages: [{}]".format(",".join(f"'{image}'" for image in gcp_image_names)))

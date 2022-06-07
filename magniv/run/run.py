@@ -1,8 +1,7 @@
-import sys
-import importlib.util
 import hashlib
+import importlib.util
 import os
-import json
+import sys
 
 
 def run(filepath, function_name):

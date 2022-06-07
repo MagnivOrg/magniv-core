@@ -1,0 +1,64 @@
+name: "\U0001F41E Bug report"
+description: report a bug in magniv
+labels: [ "bug" ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is. If you intend to submit a PR for this issue, please let us know
+      placeholder: Bug description
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the issue you encountered.
+      options:
+        - label: I have searched the existing issues
+          required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Please provide a guide to reproduce the problem you ran into. Or provide the Python code below that can be run to reproduce the issue. 
+      placeholder: Reproduction
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: "If possible, please include screenshot(s) so that we can understand what the issue is."
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: "If you can, please include the full stacktrace of the errors or the logs from your terminal."
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: system-info
+    attributes:
+      label: System Info
+      description: Please share your environment information.
+      render: shell
+      placeholder: magniv version, python version, etc
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: Select the severity of this issue
+      options:
+        - annoying
+        - serious, but I can work around it
+        - blocking all usage of magniv
+    validations:
+      required: true
