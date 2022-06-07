@@ -19,7 +19,7 @@ body:
       label: Motivation
       description: |
         Please outline the motivation for the proposal. Is your feature request related to a problem? Is this related to another gh-issue? (please link if so)
-        
+
 
   - type: textarea
     id: contribution
