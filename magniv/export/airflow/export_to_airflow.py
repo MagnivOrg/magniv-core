@@ -87,7 +87,7 @@ def _create_docker_image(
     if env_file_path != None:
         env_values_dict = dotenv_values(env_file_path)
         environment_arguments = "\n".join(
-            ["env {}={}\n".format(key, env_values_dict[key]) for key in env_values_dict]
+            ["env {}={}".format(key, env_values_dict[key]) for key in env_values_dict]
         )
     dockerfile = """
 # syntax=docker/dockerfile:1
@@ -99,7 +99,7 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
                 """.format(
-        python_version, environment_arguments, requirements
+        python_version, requirements, environment_arguments
     )
     with open("{}/Dockerfile".format(path), "w") as fo:
         fo.write(dockerfile)
