@@ -14,7 +14,7 @@ setup(
     project_urls={"Documentation": "https://docs.magniv.io",},
     long_description=long_description,
     long_description_content_type="text/markdown",
-    version="0.1.34",
+    version="0.1.35",
     py_modules=["magniv"],
     packages=find_packages(),
     install_requires=["Click", "docker"],
