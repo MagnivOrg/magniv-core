@@ -83,7 +83,7 @@ def _create_docker_image(
     path = "/".join(requirements.split("/")[:-1])
     if not gcp:
         requirements = "requirements.txt"
-    enviroment_arguments = None
+    environment_arguments = ''
     if env_file_path != None:
         env_values_dict = dotenv_values(env_file_path)
         environment_arguments = "\n".join(
