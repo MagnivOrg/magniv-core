@@ -1,5 +1,5 @@
 apache-airflow==2.3.2
 click==8.0.4
-docker_py==1.10.6
+docker==5.0.3
 python-dotenv==0.19.2
 requests==2.27.1
