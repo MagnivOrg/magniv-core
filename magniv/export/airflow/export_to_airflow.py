@@ -82,7 +82,9 @@ def _create_docker_image(
     environment_arguments = ""
     if env_file_path != None:
         env_values_dict = dotenv_values(env_file_path)
-        environment_arguments = "\n".join(["ENV {}={}".format(key, env_values_dict[key]) for key in env_values_dict])
+        environment_arguments = "\n".join(
+            ["ENV {}={}".format(key, env_values_dict[key]) for key in env_values_dict]
+        )
     dockerfile = """
 # syntax=docker/dockerfile:1
 

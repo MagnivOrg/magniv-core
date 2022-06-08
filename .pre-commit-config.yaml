@@ -67,14 +67,14 @@ repos:
     hooks:
       - id: black
         args:
-          - --line-length=120
+          - --line-length=98
           - --exclude
           - __init__.py
   - repo: https://github.com/asottile/blacken-docs
     rev: v1.12.1
     hooks:
       - id: blacken-docs
-        args: [--line-length=120]
+        args: [--line-length=98]
         additional_dependencies: [black==22.3.0]
   - repo: https://github.com/asottile/yesqa
     rev: v1.3.0

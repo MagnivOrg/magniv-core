@@ -30,10 +30,10 @@ jobs:
       - name: Lint with flake8
         run: |
           # exit-zero treats all errors as warnings.
-          flake8 . --count --exit-zero --max-line-length=120 --statistics
+          flake8 . --count --exit-zero --max-line-length=98 --statistics
       - name: Lint with black
         run: |
-          black --check .
+          black . --check --line-length=98
       - name: Lint with isort
         run: |
           isort . --check --profile black
