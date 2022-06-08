@@ -36,4 +36,4 @@ jobs:
           black . --check --line-length=98
       - name: Lint with isort
         run: |
-          isort . --check --profile black
+          isort . --check --profile black --line-length=98

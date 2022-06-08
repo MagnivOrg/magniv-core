@@ -1,12 +1,13 @@
 # Traverse all python files in this directory and one child lower as well.
-import os
-from inspect import getmembers, getsourcelines
-from magniv.core import task, Task
-from magniv.utils.utils import _save_to_json
-import importlib.util
 import hashlib
+import importlib.util
+import os
 import platform
 import sys
+from inspect import getmembers, getsourcelines
+
+from magniv.core import Task, task
+from magniv.utils.utils import _save_to_json
 
 
 def _get_python_version(root):
