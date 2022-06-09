@@ -13,6 +13,29 @@ ______________________________________________________________________
 <div align="left">
 
 To learn more about magniv take a look at [our documentation](https://docs.magniv.io)
+  
+### Quickstart ⚡
+
+To get Magniv running with a simple "Hello, World" example, follow these three steps:
+
+<span>1.</span> Install Magniv from pip.
+
+```bash
+pip install magniv
+```
+
+<span>3.</span> Create /tasks/requirements.txt every Magniv project requires at least one requirements.txt
+
+<span>2.</span> Run the code below as a Python script or in a Python notebook (or in a colab notebook).
+
+```python
+from magniv.core import task
+
+@task(schedule="@hourly")
+def hello_world():
+    print("Hello world")
+
+```
 
 ## Monitoring
 
