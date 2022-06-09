@@ -2,7 +2,7 @@
 
 <img src="https://www.magniv.io/static/media/textlogo.e9b53078962edf01fb96e8f0eeab7880.svg" width="400px">
 
-**Core Library for One line data science infra.**
+**One line data science infra.**
 
 <a href="https://www.loom.com/share/320a5e9750904f1da250ce1d4dfcd909"><img alt="Demo with Loom" src="https://img.shields.io/badge/Demo-loom-552586.svg?style=for-the-badge&labelColor=gray"></a>
 <a href="https://actions-badge.atrox.dev/MagnivOrg/magniv-core/goto?ref=master"><img alt="Build" src="https://img.shields.io/github/workflow/status/MagnivOrg/magniv-core/CI%20tests/master?style=for-the-badge" /></a>
@@ -12,9 +12,9 @@ ______________________________________________________________________
 
 <div align="left">
 
-To learn more about magniv take a look at [our documentation](https://docs.magniv.io)
+To learn more about Magniv take a look at [our documentation](https://docs.magniv.io)
   
-### Quickstart ⚡
+## Quickstart ⚡
 
 To get Magniv running with a simple "Hello, World" example, follow these three steps:
 
@@ -24,9 +24,9 @@ To get Magniv running with a simple "Hello, World" example, follow these three s
 pip install magniv
 ```
 
-<span>3.</span> Create /tasks/requirements.txt every Magniv project requires at least one requirements.txt
+<span>2.</span> Create /tasks/requirements.txt every Magniv project requires at least one requirements.txt
 
-<span>2.</span> Run the code below as a Python script or in a Python notebook (or in a colab notebook).
+<span>3.</span> Run the code below as a Python script or in a Python notebook (or in a colab notebook).
 
 ```python
 from magniv.core import task
