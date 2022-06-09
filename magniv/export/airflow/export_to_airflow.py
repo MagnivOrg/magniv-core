@@ -17,9 +17,7 @@ def export_to_airflow(
     env_file_path=None,
 ):
     dag_template_filename = "dag-template.py"
-    dag_template_directory = "{}/{}".format(
-        os.path.dirname(__file__), dag_template_filename
-    )
+    dag_template_directory = "{}/{}".format(os.path.dirname(__file__), dag_template_filename)
     docker_image_info = []
     for task_info in task_list:
         print("starting task .... ")
@@ -53,9 +51,7 @@ def export_to_airflow(
                     .replace("functiontoreplace", task_info["name"])
                     .replace(
                         "callbackhooktoreplace",
-                        "'{}'".format(callback_hook)
-                        if callback_hook != None
-                        else "None",
+                        "'{}'".format(callback_hook) if callback_hook != None else "None",
                     )
                     .replace(
                         "successtoreplace",
@@ -83,7 +79,7 @@ def _create_docker_image(
     path = "/".join(requirements.split("/")[:-1])
     if not gcp:
         requirements = "requirements.txt"
-    environment_arguments = ''
+    environment_arguments = ""
     if env_file_path != None:
         env_values_dict = dotenv_values(env_file_path)
         environment_arguments = "\n".join(

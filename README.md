@@ -1,14 +1,41 @@
 <div align="center">
 
-  <img src="https://www.magniv.io/static/media/textlogo.e9b53078962edf01fb96e8f0eeab7880.svg" width="400px">
+<img src="https://www.magniv.io/static/media/textlogo.e9b53078962edf01fb96e8f0eeab7880.svg" width="400px">
 
-  **Core Library for One line data science infra.**
+**One line data science infra.**
 
-  <a href="https://www.loom.com/share/320a5e9750904f1da250ce1d4dfcd909"><img alt="Demo with Loom" src="https://img.shields.io/badge/Demo-loom-552586.svg?style=for-the-badge&labelColor=gray"></a>
+<a href="https://www.loom.com/share/320a5e9750904f1da250ce1d4dfcd909"><img alt="Demo with Loom" src="https://img.shields.io/badge/Demo-loom-552586.svg?style=for-the-badge&labelColor=gray"></a>
+<a href="https://actions-badge.atrox.dev/MagnivOrg/magniv-core/goto?ref=master"><img alt="Build" src="https://img.shields.io/github/workflow/status/MagnivOrg/magniv-core/CI%20tests/master?style=for-the-badge" /></a>
+<a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/-Python 3.6+-blue?style=for-the-badge&logo=python&logoColor=white"></a>
+
 ______________________________________________________________________
+
 <div align="left">
 
-To learn more about magniv take a look at [our documentation](https://docs.magniv.io)
+To learn more about Magniv take a look at [our documentation](https://docs.magniv.io)
+  
+## Quickstart ⚡
+
+To get Magniv running with a simple "Hello, World" example, follow these three steps:
+
+<span>1.</span> Install Magniv from pip.
+
+```bash
+pip install magniv
+```
+
+<span>2.</span> Create /tasks/requirements.txt every Magniv project requires at least one requirements.txt
+
+<span>3.</span> Run the code below as a Python script or in a Python notebook (or in a colab notebook).
+
+```python
+from magniv.core import task
+
+@task(schedule="@hourly")
+def hello_world():
+    print("Hello world")
+
+```
 
 ## Monitoring
 
