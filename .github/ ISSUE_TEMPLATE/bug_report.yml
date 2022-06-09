@@ -1,11 +1,20 @@
-name: "\U0001F41E Bug report"
-description: report a bug in magniv
-labels: [ "bug" ]
+---
+name: Magniv Bug report
+description: Problems and issues with code in Magniv core
+labels: ["kind:bug"]
 body:
   - type: markdown
     attributes:
-      value: |
-        Thanks for taking the time to fill out this bug report!
+      # yamllint disable rule:line-length
+      value: "
+        <img src='https://www.magniv.io/static/media/textlogo.e9b53078962edf01fb96e8f0eeab7880.svg' align='left' width='180'>
+        Thank you for finding the time to report the problem!
+
+        Note, you do not need to create an issue if you have a change ready to submit!
+
+        You can open a [pull request](https://github.com/MagnivOrg/magniv-core/pulls) immediately instead.
+        <br clear='left'/>"
+      # yamllint enable rule:line-length
   - type: textarea
     id: bug-description
     attributes:
@@ -25,7 +34,7 @@ body:
     id: reproduction
     attributes:
       label: Reproduction
-      description: Please provide a guide to reproduce the problem you ran into. Or provide the Python code below that can be run to reproduce the issue.
+      description: Please provide a guide to reproduce the problem you ran into. Or provide the Python code below that can be run to reproduce the issue. 
       placeholder: Reproduction
     validations:
       required: true
