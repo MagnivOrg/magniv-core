@@ -1,10 +1,10 @@
 # Traverse all python files in this directory and one child lower as well.
-import hashlib
-import importlib.util
+import ast
 import os
 import platform
 import sys
-from inspect import getmembers, getsourcelines
+import pdb
+from inspect import getsourcelines
 
 from magniv.core import Task, task
 from magniv.utils.utils import _save_to_json
@@ -16,7 +16,6 @@ def _get_python_version(root):
 
 def _get_owner(root):
     return "local"
-
 
 def build():
     is_task = lambda x: isinstance(x, Task)
@@ -36,13 +35,19 @@ def build():
             ext = os.path.splitext(file_name)[-1].lower()
             if ext == ".py":
                 filepath = "{}/{}".format(root, file_name)
-                org_mod_name, _ = os.path.splitext(os.path.split(filepath)[-1])
-                path_hash = hashlib.sha1(filepath.encode("utf-8")).hexdigest()
-                mod_name = f"unusual_prefix_{path_hash}_{org_mod_name}"
-                spec = importlib.util.spec_from_file_location(mod_name, filepath)
-                mod = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(mod)
-                tasks = getmembers(mod, is_task)
+                with open(filepath) as file:
+                    parsed_ast = ast.parse(file.read())
+                tasks = []
+                for node in ast.walk(parsed_ast):
+                    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                        if len(node.decorator_list) > 0:
+                            for decorator in node.decorator_list:
+                                if not isinstance(decorator, ast.Name) and decorator.func.id == 'task':
+                                    pdb.set_trace()
+                                    tasks.append(node)
+                for task in tasks:
+                    tasks_list.append(task.name)
+                print(tasks_list)
                 req = (
                     "{}/requirements.txt".format(root)
                     if os.path.exists("{}/requirements.txt".format(root))
