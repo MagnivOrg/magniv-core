@@ -3,8 +3,6 @@ import ast
 import os
 import platform
 import sys
-import pdb
-from inspect import getsourcelines
 
 from magniv.core import Task, task
 from magniv.utils.utils import _save_to_json
@@ -16,6 +14,7 @@ def _get_python_version(root):
 
 def _get_owner(root):
     return "local"
+
 
 def build():
     is_task = lambda x: isinstance(x, Task)
@@ -56,22 +55,21 @@ def build():
                                 ):
                                     for decorator in node.decorator_list:
                                         info = {
-                                                    "location": filepath,
-                                                    "name": node,
-                                                    "python_version": _get_python_version(root),
-                                                    "owner": _get_owner(root),
-                                                    "requirements_location": req,
-                                                    "line_number": lineno,
-                                                }
+                                            "location": filepath,
+                                            "name": node.name,
+                                            "python_version": _get_python_version(root),
+                                            "owner": _get_owner(root),
+                                            "requirements_location": req,
+                                            "line_number": node.lineno,
+                                        }
                                         for kw in decorator.keywords:
-                                            info[kw.arg] = kw.value.value                
-                for name, t in tasks:
-                    if t.key in used_keys:
-                        raise ValueError(
-                            f'Task "{t.key}" in file {filepath} is using "{t.key}" as a key which is already used in {used_keys[t.key]}, please resolve by changing one of the keys'
-                        )
-                    else:
-                        used_keys[t.key] = filepath
-#                     code, lineno = getsourcelines(t)
-                    tasks_list.append(info)
+                                            info[kw.arg] = kw.value.value
+                                        if "key" in info:
+                                            if info.key in used_keys:
+                                                raise ValueError(
+                                                    f'Task "{info.key}" in file {filepath} is using "{info.key}" as a key which is already used in {used_keys[info.key]}, please resolve by changing one of the keys'
+                                                )
+                                            else:
+                                                used_keys[info.key] = filepath
+            tasks_list.append(info)
         _save_to_json(tasks_list, filepath="./dump.json")
