@@ -61,11 +61,13 @@ def build():
                                             "owner": _get_owner(root),
                                             "requirements_location": req,
                                             "line_number": node.lineno,
+                                            "key": None, 
+                                            "description": None,
                                         }
                                         for kw in decorator.keywords:
                                             info[kw.arg] = kw.value.value
                                         missing_reqs = list(
-                                            {"schedule", "key", "description"} - set(info)
+                                            {"schedule"} - set(info)
                                         )
                                         if len(missing_reqs) > 0:
                                             raise ValueError(
