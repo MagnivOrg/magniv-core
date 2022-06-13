@@ -64,6 +64,15 @@ def build():
                                         }
                                         for kw in decorator.keywords:
                                             info[kw.arg] = kw.value.value
+                                        missing_reqs = list(
+                                            {"schedule", "key", "description"} - set(info)
+                                        )
+                                        if len(missing_reqs) > 0:
+                                            raise ValueError(
+                                                "Task missing required variables, please resolve by defining ("
+                                                + ",".join([f" {x} " for x in missing_reqs])
+                                                + ") in the task decorator"
+                                            )
                                         if "key" in info:
                                             if info.key in used_keys:
                                                 raise ValueError(
@@ -71,5 +80,5 @@ def build():
                                                 )
                                             else:
                                                 used_keys[info.key] = filepath
-            tasks_list.append(info)
+                tasks_list.append(info)
         _save_to_json(tasks_list, filepath="./dump.json")
