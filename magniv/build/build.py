@@ -1,12 +1,10 @@
 # Traverse all python files in this directory and one child lower as well.
-import hashlib
-import importlib.util
+import ast
 import os
 import platform
 import sys
-from inspect import getmembers, getsourcelines
+from typing import Dict
 
-from magniv.core import Task, task
 from magniv.utils.utils import _save_to_json
 
 
@@ -58,7 +56,6 @@ def get_tasks_from_file(filepath, root, req, used_keys) -> Dict:
 
 
 def build():
-    is_task = lambda x: isinstance(x, Task)
     tasks_list = []
     used_keys = {}
     root_req = None
@@ -71,6 +68,15 @@ def build():
     for root, dirs, files in os.walk("./tasks"):
         if os.path.exists("./tasks/requirements.txt"):
             root_req = "./tasks/requirements.txt"
+        req = (
+            "{}/requirements.txt".format(root)
+            if os.path.exists("{}/requirements.txt".format(root))
+            else root_req
+        )
+        if req == None:
+            raise OSError(
+                f'requirements.txt not found for path "{root}", either add one to this directory or the root directory'
+            )
         for file_name in files:
             ext = os.path.splitext(file_name)[-1].lower()
             if ext == ".py":
