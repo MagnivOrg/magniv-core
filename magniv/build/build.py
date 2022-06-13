@@ -16,9 +16,10 @@ def _get_owner(root):
     return "local"
 
 
-def get_task(filepath, root, req, used_keys) -> Dict:
+def get_tasks_from_file(filepath, root, req, used_keys) -> Dict:
     with open(filepath) as file:
         parsed_ast = ast.parse(file.read())
+        tasks = []
         for node in ast.walk(parsed_ast):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 if len(node.decorator_list) > 0:
@@ -50,7 +51,8 @@ def get_task(filepath, root, req, used_keys) -> Dict:
                                     )
                                 else:
                                     used_keys[info["key"]] = filepath
-                            return info, used_keys
+                                tasks.append(info)
+        return tasks, used_keys
 
 
 def build():
@@ -79,6 +81,6 @@ def build():
             ext = os.path.splitext(file_name)[-1].lower()
             if ext == ".py":
                 filepath = "{}/{}".format(root, file_name)
-                info, used_keys = get_task(filepath, root, req, used_keys)
-                tasks_list.append(info)
+                tasks, used_keys = get_tasks_from_file(filepath, root, req, used_keys)
+                tasks_list.extend(tasks)
         _save_to_json(tasks_list, filepath="./dump.json")
