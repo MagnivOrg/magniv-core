@@ -14,6 +14,7 @@ def export_to_airflow(
     gcp_project_id=None,
     gcp_dag_folder=None,
     callback_hook=None,
+    kubernetes_startup_timeout=None,
     env_file_path=None,
 ):
     dag_template_filename = "dag-template.py"
@@ -61,6 +62,7 @@ def export_to_airflow(
                         "failuretoreplace",
                         "_on_failure" if callback_hook != None else "None",
                     )
+                    .replace("startuptoreplace", str(kubernetes_startup_timeout))
                 )
                 print(line, end="")
         print("dag created!")
