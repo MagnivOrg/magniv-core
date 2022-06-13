@@ -62,7 +62,7 @@ def export_to_airflow(
                         "failuretoreplace",
                         "_on_failure" if callback_hook != None else "None",
                     )
-                    .replace("startuptoreplace", kubernetes_startup_timeout)
+                    .replace("startuptoreplace", str(kubernetes_startup_timeout))
                 )
                 print(line, end="")
         print("dag created!")
