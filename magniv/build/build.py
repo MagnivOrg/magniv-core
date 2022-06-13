@@ -61,7 +61,7 @@ def build():
                                             "owner": _get_owner(root),
                                             "requirements_location": req,
                                             "line_number": node.lineno,
-                                            "key": None, 
+                                            "key": node.name, 
                                             "description": None,
                                         }
                                         for kw in decorator.keywords:
