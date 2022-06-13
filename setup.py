@@ -16,7 +16,7 @@ setup(
     },
     long_description=long_description,
     long_description_content_type="text/markdown",
-    version="0.1.37",
+    version="0.1.38",
     py_modules=["magniv"],
     packages=find_packages(),
     install_requires=["Click", "docker", "python-dotenv", "requests"],
