@@ -7,6 +7,7 @@ def export(
     gcp_project_id=None,
     gcp_dag_folder=None,
     callback_hook=None,
+    kubernetes_startup_timeout=None,
     env_file_path=None,
 ):
     task_list = _get_tasks_json("./dump.json")
@@ -16,5 +17,6 @@ def export(
         gcp_project_id=gcp_project_id,
         gcp_dag_folder=gcp_dag_folder,
         callback_hook=callback_hook,
+        kubernetes_startup_timeout=kubernetes_startup_timeout,
         env_file_path=env_file_path,
     )
