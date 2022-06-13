@@ -52,15 +52,15 @@ def export_to_airflow(
                     .replace("functiontoreplace", task_info["name"])
                     .replace(
                         "callbackhooktoreplace",
-                        "'{}'".format(callback_hook) if callback_hook != None else "None",
+                        "'{}'".format(callback_hook) if callback_hook is not None else "None",
                     )
                     .replace(
                         "successtoreplace",
-                        "_on_success" if callback_hook != None else "None",
+                        "_on_success" if callback_hook is not None else "None",
                     )
                     .replace(
                         "failuretoreplace",
-                        "_on_failure" if callback_hook != None else "None",
+                        "_on_failure" if callback_hook is not None else "None",
                     )
                     .replace("startuptoreplace", str(kubernetes_startup_timeout))
                 )
@@ -82,7 +82,7 @@ def _create_docker_image(
     if not gcp:
         requirements = "requirements.txt"
     environment_arguments = ""
-    if env_file_path != None:
+    if env_file_path is not None:
         env_values_dict = dotenv_values(env_file_path)
         environment_arguments = "\n".join(
             ["ENV {}={}".format(key, env_values_dict[key]) for key in env_values_dict]
