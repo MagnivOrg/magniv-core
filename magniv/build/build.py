@@ -77,9 +77,8 @@ def build():
             )
         for file_name in files:
             ext = os.path.splitext(file_name)[-1].lower()
-        if ext == ".py":
-            filepath = "{}/{}".format(root, file_name)
-            info, used_keys = get_task(filepath, root, req, used_keys)
-            tasks_list.append(info)
+            if ext == ".py":
+                filepath = "{}/{}".format(root, file_name)
+                info, used_keys = get_task(filepath, root, req, used_keys)
+                tasks_list.append(info)
         _save_to_json(tasks_list, filepath="./dump.json")
-        
