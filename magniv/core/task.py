@@ -45,9 +45,22 @@ class Task:
         return self.function(*args, **kwds)
 
     def _is_valid_schedule(self, schedule) -> bool:
+        """
+        It returns `True` if the given `schedule` is a valid cron expression, and `False` otherwise
+
+        :param schedule: The cron schedule for the task
+        :return: A boolean value.
+        """
         return bool(re.match(Task.CRON_PATTERN, schedule))
 
     def _is_valid_key(self, key) -> bool:
+        """
+        It returns `True` if the given `key` matches the regular expression `Task.KEY_PATTERN`, and `False`
+        otherwise
+
+        :param key: The key of the task
+        :return: A boolean value.
+        """
         return bool(re.match(Task.KEY_PATTERN, key))
 
 
