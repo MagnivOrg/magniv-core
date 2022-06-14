@@ -7,7 +7,7 @@ import sys
 def run(filepath, function_name):
     """
     It imports a Python file and runs a function from it
-    
+
     :param filepath: The path to the file containing the function to be run
     :param function_name: The name of the function to run
     :return: The return value of the function.

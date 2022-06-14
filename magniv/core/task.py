@@ -55,7 +55,7 @@ def task(_func=None, *, schedule=None, description=None, key=None) -> Callable:
     """
     If they pass in a function, then we raise an error. If they dont pass in a function, then we return
     a wrapper function that takes a function as an argument
-    
+
     :param _func: This is the function that is being wrapped
     :param schedule: This is the schedule that the task will run on. It can be a cron string, or a
     datetime.timedelta object

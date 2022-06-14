@@ -12,7 +12,7 @@ def export(
 ):
     """
     It takes a list of tasks and exports them to Airflow
-    
+
     :param gcp: If you want to export to GCP, set this to True, defaults to False (optional)
     :param gcp_project_id: The GCP project ID where the DAGs will be deployed
     :param gcp_dag_folder: The folder in which the DAGs will be created

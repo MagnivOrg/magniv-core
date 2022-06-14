@@ -4,7 +4,7 @@ import json
 def _save_to_json(obj, filepath):
     """
     It takes a Python object and a filepath, and saves the object to the filepath as a JSON file
-    
+
     :param obj: the object to be saved
     :param filepath: The path to the file to save the data to
     """
@@ -16,7 +16,7 @@ def _get_tasks_json(filepath):
     """
     It opens the file at the given filepath, reads the contents of the file, and returns the contents as
     a Python object
-    
+
     :param filepath: The path to the JSON file containing the tasks
     :return: A list of dictionaries.
     """
@@ -29,7 +29,7 @@ def _get_function_from_json(key, filepath):
     """
     It takes a key and a filepath, and returns the location and name of the function that corresponds to
     that key
-    
+
     :param key: the key of the task you want to run
     :param filepath: the path to the json file that contains the function information
     :return: The location and name of the function
@@ -46,7 +46,7 @@ def _create_cloud_build(docker_image_info, gcp_dag_folder):
     """
     It creates a cloudbuild.yaml file that will build all the docker images and then sync the dags
     folder to the GCP bucket
-    
+
     :param docker_image_info: A list of tuples. Each tuple contains the name of the image you want to
     build and the path to the Dockerfile
     :param gcp_dag_folder: The GCP bucket where the DAGs will be stored
