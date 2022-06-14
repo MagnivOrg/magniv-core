@@ -8,6 +8,13 @@ default_args = {"owner": ownertoreplace, "start_date": datetime.now()}
 
 
 def callback_post(callback_type, context):
+    """
+    It sends a POST request to the callbackhooktoreplace URL with a JSON payload containing the
+    callback_type, task_id, run_id, and id
+
+    :param callback_type: The type of callback
+    :param context: A dictionary containing the following keys:
+    """
     requests.post(
         callbackhooktoreplace,
         json={
@@ -20,10 +27,20 @@ def callback_post(callback_type, context):
 
 
 def _on_success(context):
+    """
+    It calls the callback_post function with the "success" status and the context object
+
+    :param context: The context object that was passed to the original function
+    """
     callback_post("success", context)
 
 
 def _on_failure(context):
+    """
+    If the job fails, call the callback_post function with the "failure" status and the context object
+
+    :param context: The context object that is passed to the task
+    """
     callback_post("failure", context)
 
 

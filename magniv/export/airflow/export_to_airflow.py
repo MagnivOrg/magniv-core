@@ -17,6 +17,20 @@ def export_to_airflow(
     kubernetes_startup_timeout=None,
     env_file_path=None,
 ):
+    """
+    It takes a list of tasks, creates a docker image for each task, creates a dag file for each task,
+    and then creates a cloud build file to build the docker images.
+
+    :param task_list: a list of dictionaries, each dictionary containing the following keys:
+    :param gcp: If you want to use Google Cloud Platform, set this to True, defaults to False (optional)
+    :param gcp_project_id: The project id of your GCP project
+    :param gcp_dag_folder: The folder where the dag files will be stored
+    :param callback_hook: This is the URL of the callback function that will be called when the task is
+    completed
+    :param kubernetes_startup_timeout: This is the time in seconds that Airflow will wait for the
+    Kubernetes pod to start
+    :param env_file_path: This is the path to the environment file that you want to use
+    """
     dag_template_filename = "dag-template.py"
     dag_template_directory = "{}/{}".format(os.path.dirname(__file__), dag_template_filename)
     docker_image_info = []
@@ -78,6 +92,19 @@ def _create_docker_image(
     gcp_project_id=None,
     env_file_path=None,
 ):
+    """
+    It creates a Dockerfile in the same directory as the requirements.txt file, and then builds a docker
+    image from that Dockerfile
+
+    :param python_version: The version of python you want to use
+    :param requirements: The path to the requirements.txt file
+    :param key: This is the name of the function key. It's used to name the docker image
+    :param gcp: If you're using GCP, set this to True, defaults to False (optional)
+    :param gcp_project_id: The ID of the GCP project you want to use
+    :param env_file_path: The path to the .env file that contains the environment variables that you
+    want to pass to the Docker container
+    :return: The docker image name and the path to the dockerfile
+    """
     path = "/".join(requirements.split("/")[:-1])
     if not gcp:
         requirements = "requirements.txt"
