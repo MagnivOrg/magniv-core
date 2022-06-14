@@ -52,8 +52,19 @@ class Task:
 
 
 def task(_func=None, *, schedule=None, description=None, key=None) -> Callable:
+    """
+    If they pass in a function, then we raise an error. If they dont pass in a function, then we return
+    a wrapper function that takes a function as an argument
+    
+    :param _func: This is the function that is being wrapped
+    :param schedule: This is the schedule that the task will run on. It can be a cron string, or a
+    datetime.timedelta object
+    :param description: A description of the task
+    :param key: This is the name of the task key. It is used to identify the task in the database
+    :return: A function that takes in a function and returns a task instance.
+    """
     if _func is not None:  # this means they did not pass in any arguments like @magniv
-        # The reason we do this here is bc in the case they dont pass arguments we dont nee dthe extra wrapper below.
+        # The reason we do this here is bc in the case they dont pass arguments we dont need the extra wrapper below.
         raise ValueError("You must use arguments with magniv, it can not be called alone")
 
     def wrapper(function):

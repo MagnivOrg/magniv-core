@@ -4,16 +4,16 @@
 
 **One line data science infra.**
 
-<a href="https://www.loom.com/share/320a5e9750904f1da250ce1d4dfcd909"><img alt="Demo with Loom" src="https://img.shields.io/badge/Demo-loom-552586.svg?style=for-the-badge&labelColor=gray"></a>
 <a href="https://actions-badge.atrox.dev/MagnivOrg/magniv-core/goto?ref=master"><img alt="Build" src="https://img.shields.io/github/workflow/status/MagnivOrg/magniv-core/CI%20tests/master?style=for-the-badge" /></a>
 <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/-Python 3.6+-blue?style=for-the-badge&logo=python&logoColor=white"></a>
+<a href="https://www.loom.com/share/320a5e9750904f1da250ce1d4dfcd909"><img alt="Demo with Loom" src="https://img.shields.io/badge/Demo-loom-552586.svg?style=for-the-badge&labelColor=gray"></a>
 
 ______________________________________________________________________
 
 <div align="left">
 
 To learn more about Magniv take a look at [our documentation](https://docs.magniv.io)
-  
+
 ## Quickstart ⚡
 
 To get Magniv running with a simple "Hello, World" example, follow these three steps:
@@ -31,10 +31,10 @@ pip install magniv
 ```python
 from magniv.core import task
 
+
 @task(schedule="@hourly")
 def hello_world():
     print("Hello world")
-
 ```
 
 ## Monitoring

@@ -9,14 +9,37 @@ from magniv.utils.utils import _save_to_json
 
 
 def _get_python_version(root):
+    """
+    It returns the version of Python that is running
+
+    :param root: The root directory of the project
+    :return: The version of Python that is being used.
+    """
     return platform.python_version()
 
 
 def _get_owner(root):
+    """
+    It returns the string "local"
+
+    :param root: The root directory of the project
+    :return: The owner of the root directory.
+    """
     return "local"
 
 
 def get_tasks_from_file(filepath, root, req, used_keys) -> Dict:
+    """
+    > This function takes a filepath, root, req, and used_keys as arguments and returns a dictionary of
+    tasks and used_keys
+
+    :param filepath: The path to the file that contains the task
+    :param root: The root directory of the project
+    :param req: The location of the requirements.txt file
+    :param used_keys: This is a dictionary of keys that have been used so far. This is used to ensure
+    that no two tasks have the same key
+    :return: A list of dictionaries, each dictionary is a task.
+    """
     with open(filepath) as file:
         parsed_ast = ast.parse(file.read())
         tasks = []
@@ -56,6 +79,10 @@ def get_tasks_from_file(filepath, root, req, used_keys) -> Dict:
 
 
 def build():
+    """
+    We walk through the `tasks` directory, and for each file we find, we check if it's a Python file,
+    and if it is, we get the tasks from it and add them to our list of tasks
+    """
     tasks_list = []
     used_keys = {}
     root_req = None
