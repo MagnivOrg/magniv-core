@@ -92,11 +92,15 @@ def save_tasks(
     used_keys: Dict = {},
 ) -> NoReturn:
     """
-    This function takes a root and req as arguments and returns a list of tasks
-
-        :param root: The root directory of the project
-        :param req: The location of the requirements.txt file
-        :return: A list of dictionaries, each dictionary is a task.
+    Save the decorated tasks to a json file.
+    
+    :param task_folder: The folder where the tasks are located
+    :param dump_save_pth: The path to the file where the dump will be saved, defaults to ./dump.json
+    :param reqs_pth: The path to the requirements.txt file, defaults to /requirements.txt
+    :param root_req: The root requirement file to use, defaults to None
+    :param tasks_list: The list of tasks to save, defaults to []
+    :param used_keys: The dictionary of used keys, defaults to {}
+    :return: NoReturn
     """
     for root, dirs, files in os.walk(task_folder):
         if os.path.exists(task_folder + reqs_pth):
