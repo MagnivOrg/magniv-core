@@ -93,7 +93,7 @@ def save_tasks(
 ) -> NoReturn:
     """
     Save the decorated tasks to a json file.
-    
+
     :param task_folder: The folder where the tasks are located
     :param dump_save_pth: The path to the file where the dump will be saved, defaults to ./dump.json
     :param reqs_pth: The path to the requirements.txt file, defaults to /requirements.txt
@@ -106,8 +106,8 @@ def save_tasks(
         if os.path.exists(task_folder + reqs_pth):
             root_req = task_folder + reqs_pth
         req = (
-            "{}" + reqs_pth.format(root)
-            if os.path.exists("{}" + reqs_pth.format(root))
+            "{}{}".format(root, reqs_pth)
+            if os.path.exists("{}{}".format(root, reqs_pth))
             else root_req
         )
         if req == None:
