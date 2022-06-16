@@ -44,7 +44,10 @@ def get_tasks_from_file(filepath, root, req, used_keys) -> Dict:
     with open(filepath) as file:
         parsed_ast = ast.parse(file.read())
     for node in ast.walk(parsed_ast):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and len(node.decorator_list) > 0:
+        if (
+            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and len(node.decorator_list) > 0
+        ):
             for decorator in node.decorator_list:
                 if not isinstance(decorator, ast.Name) and decorator.func.id == "task":
                     for decorator in node.decorator_list:
