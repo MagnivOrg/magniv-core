@@ -21,7 +21,7 @@ class Task:
     def __init__(self, function, schedule=None, description=None, key=None) -> None:
         if schedule is not None:
             if not self._is_valid_schedule(schedule):
-                raise ValueError("{} is not a valid cron schedule".format(schedule))
+                raise ValueError(f"{schedule} is not a valid cron schedule")
         else:
             raise ValueError("Schedule must be provided")
         self.schedule = schedule

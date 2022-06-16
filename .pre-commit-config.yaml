@@ -34,11 +34,11 @@ repos:
       - id: pretty-format-json
       - id: trailing-whitespace
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.32.1
+    rev: v2.34.0
     hooks:
       - id: pyupgrade
         args:
-          - --py3-plus
+          - --py37-plus
           - --keep-runtime-typing
   - repo: https://github.com/myint/autoflake
     rev: v1.4

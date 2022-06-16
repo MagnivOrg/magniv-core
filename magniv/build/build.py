@@ -103,13 +103,9 @@ def save_tasks(
     :return: NoReturn
     """
     for root, dirs, files in os.walk(task_folder):
-        if os.path.exists("{}/{}".format(task_folder, reqs_pth)):
+        if os.path.exists(f"{task_folder}/{reqs_pth}"):
             root_req = task_folder + reqs_pth
-        req = (
-            "{}/{}".format(root, reqs_pth)
-            if os.path.exists("{}/{}".format(root, reqs_pth))
-            else root_req
-        )
+        req = f"{root}/{reqs_pth}" if os.path.exists(f"{root}/{reqs_pth}") else root_req
         if req == None:
             raise OSError(
                 f'requirements.txt not found for path "{root}", either add one to this directory or the root directory'
@@ -117,7 +113,7 @@ def save_tasks(
         for file_name in files:
             ext = os.path.splitext(file_name)[-1].lower()
             if ext == ".py":
-                filepath = "{}/{}".format(root, file_name)
+                filepath = f"{root}/{file_name}"
                 tasks, used_keys = get_tasks_from_file(filepath, root, req, used_keys)
                 tasks_list.extend(tasks)
         _save_to_json(tasks_list, filepath=dump_save_pth)
