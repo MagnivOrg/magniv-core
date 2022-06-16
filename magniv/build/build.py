@@ -3,7 +3,7 @@ import ast
 import os
 import platform
 import sys
-from typing import Dict
+from typing import Dict, List, NoReturn, Tuple
 
 from magniv.utils.utils import _save_to_json
 
@@ -28,7 +28,7 @@ def _get_owner(root):
     return "local"
 
 
-def get_tasks_from_file(filepath, root, req, used_keys) -> Dict:
+def get_tasks_from_file(filepath: str, root: str, req: str, used_keys: Dict) -> Tuple[List, Dict]:
     """
     > This function takes a filepath, root, req, and used_keys as arguments and returns a dictionary of
     tasks and used_keys
@@ -83,26 +83,27 @@ def get_tasks_from_file(filepath, root, req, used_keys) -> Dict:
     return tasks, used_keys
 
 
-def build():
+def save_tasks(
+    task_folder: str,
+    dump_save_pth: str = "./dump.json",
+    reqs_pth: str = "/requirements.txt",
+    root_req: None = None,
+    tasks_list: List = [],
+    used_keys: Dict = {},
+) -> NoReturn:
     """
-    We walk through the `tasks` directory, and for each file we find, we check if it's a Python file,
-    and if it is, we get the tasks from it and add them to our list of tasks
+    This function takes a root and req as arguments and returns a list of tasks
+
+        :param root: The root directory of the project
+        :param req: The location of the requirements.txt file
+        :return: A list of dictionaries, each dictionary is a task.
     """
-    tasks_list = []
-    used_keys = {}
-    root_req = None
-    if not os.path.exists("./tasks"):
-        raise OSError("You must have a tasks folder that contains all of your tasks files")
-
-    # Hack to fix project imports by adding project directory to Python path
-    sys.path.append(os.getcwd() + "/tasks")
-
-    for root, dirs, files in os.walk("./tasks"):
-        if os.path.exists("./tasks/requirements.txt"):
-            root_req = "./tasks/requirements.txt"
+    for root, dirs, files in os.walk(task_folder):
+        if os.path.exists(task_folder + reqs_pth):
+            root_req = task_folder + reqs_pth
         req = (
-            "{}/requirements.txt".format(root)
-            if os.path.exists("{}/requirements.txt".format(root))
+            "{}" + reqs_pth.format(root)
+            if os.path.exists("{}" + reqs_pth.format(root))
             else root_req
         )
         if req == None:
@@ -115,4 +116,18 @@ def build():
                 filepath = "{}/{}".format(root, file_name)
                 tasks, used_keys = get_tasks_from_file(filepath, root, req, used_keys)
                 tasks_list.extend(tasks)
-        _save_to_json(tasks_list, filepath="./dump.json")
+        _save_to_json(tasks_list, filepath=dump_save_pth)
+
+
+def build():
+    """
+    We walk through the `tasks` directory, and for each file we find, we check if it's a Python file,
+    and if it is, we get the tasks from it and add them to our list of tasks
+    """
+    task_folder = "./tasks"
+    if not os.path.exists(task_folder):
+        raise OSError("You must have a tasks folder that contains all of your tasks files")
+
+    # Hack to fix project imports by adding project directory to Python path
+    sys.path.append(os.getcwd() + task_folder)
+    save_tasks(task_folder)
