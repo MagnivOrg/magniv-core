@@ -86,7 +86,7 @@ def get_tasks_from_file(filepath: str, root: str, req: str, used_keys: Dict) -> 
 def save_tasks(
     task_folder: str,
     dump_save_pth: str = "./dump.json",
-    reqs_pth: str = "/requirements.txt",
+    reqs_pth: str = "requirements.txt",
     root_req: None = None,
     tasks_list: List = [],
     used_keys: Dict = {},
@@ -103,11 +103,11 @@ def save_tasks(
     :return: NoReturn
     """
     for root, dirs, files in os.walk(task_folder):
-        if os.path.exists(task_folder + reqs_pth):
+        if os.path.exists("{}/{}".format(task_folder, reqs_pth)):
             root_req = task_folder + reqs_pth
         req = (
-            "{}{}".format(root, reqs_pth)
-            if os.path.exists("{}{}".format(root, reqs_pth))
+            "{}/{}".format(root, reqs_pth)
+            if os.path.exists("{}/{}".format(root, reqs_pth))
             else root_req
         )
         if req == None:
