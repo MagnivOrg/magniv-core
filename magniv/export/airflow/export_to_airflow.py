@@ -32,7 +32,7 @@ def export_to_airflow(
     :param env_file_path: This is the path to the environment file that you want to use
     """
     dag_template_filename = "dag-template.py"
-    dag_template_directory = "{}/{}".format(os.path.dirname(__file__), dag_template_filename)
+    dag_template_directory = f"{os.path.dirname(__file__)}/{dag_template_filename}"
     docker_image_info = []
     for task_info in task_list:
         print("starting task .... ")
@@ -61,12 +61,12 @@ def export_to_airflow(
                     line.replace("dag_id", "'{}'".format(task_info["key"]))
                     .replace("ownertoreplace", "'{}'".format(task_info["owner"]))
                     .replace("scheduletoreplace", "'{}'".format(task_info["schedule"]))
-                    .replace("imagetoreplace", "'{}'".format(docker_name))
+                    .replace("imagetoreplace", f"'{docker_name}'")
                     .replace("filetoreplace", task_info["location"])
                     .replace("functiontoreplace", task_info["name"])
                     .replace(
                         "callbackhooktoreplace",
-                        "'{}'".format(callback_hook) if callback_hook is not None else "None",
+                        f"'{callback_hook}'" if callback_hook is not None else "None",
                     )
                     .replace(
                         "successtoreplace",
@@ -112,7 +112,7 @@ def _create_docker_image(
     if env_file_path is not None:
         env_values_dict = dotenv_values(env_file_path)
         environment_arguments = "\n".join(
-            ['ENV {}="{}"'.format(key, env_values_dict[key]) for key in env_values_dict]
+            [f'ENV {key}="{env_values_dict[key]}"' for key in env_values_dict]
         )
     dockerfile = """
 # syntax=docker/dockerfile:1
@@ -126,11 +126,11 @@ COPY . .
                 """.format(
         python_version, requirements, environment_arguments
     )
-    with open("{}/Dockerfile".format(path), "w") as fo:
+    with open(f"{path}/Dockerfile", "w") as fo:
         fo.write(dockerfile)
-    docker_name = "{}dockerimage".format(key)
+    docker_name = f"{key}dockerimage"
     if gcp:
-        docker_name = "gcr.io/{}/{}".format(gcp_project_id, docker_name)
+        docker_name = f"gcr.io/{gcp_project_id}/{docker_name}"
     else:
         client = docker.from_env()
         client.images.build(path=path, tag=docker_name)
