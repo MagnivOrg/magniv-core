@@ -40,8 +40,8 @@ def export_to_airflow(
         print(new_filename)
         if not os.path.exists("dags/"):
             os.mkdir("dags")
-        if not os.path.exists("dags/{}/".format(task_info["owner"])):
-            os.mkdir("dags/{}/".format(task_info["owner"]))
+        if not os.path.exists(f'dags/{task_info["owner"]}/'):
+            os.mkdir(f'dags/{task_info["owner"]}/')
         shutil.copyfile(dag_template_directory, new_filename)
         print("creating docker image ... ")
         docker_name, path = _create_docker_image(
@@ -58,9 +58,9 @@ def export_to_airflow(
         with fileinput.input(new_filename, inplace=True) as f:
             for line in f:
                 line = (
-                    line.replace("dag_id", "'{}'".format(task_info["key"]))
-                    .replace("ownertoreplace", "'{}'".format(task_info["owner"]))
-                    .replace("scheduletoreplace", "'{}'".format(task_info["schedule"]))
+                    line.replace("dag_id", f"""'{task_info["key"]}'""")
+                    .replace("ownertoreplace", f"""'{task_info["owner"]}'""")
+                    .replace("scheduletoreplace", f"""'{task_info["schedule"]}'""")
                     .replace("imagetoreplace", f"'{docker_name}'")
                     .replace("filetoreplace", task_info["location"])
                     .replace("functiontoreplace", task_info["name"])
@@ -69,15 +69,14 @@ def export_to_airflow(
                         f"'{callback_hook}'" if callback_hook is not None else "None",
                     )
                     .replace(
-                        "successtoreplace",
-                        "_on_success" if callback_hook is not None else "None",
+                        "successtoreplace", "_on_success" if callback_hook is not None else "None"
                     )
                     .replace(
-                        "failuretoreplace",
-                        "_on_failure" if callback_hook is not None else "None",
+                        "failuretoreplace", "_on_failure" if callback_hook is not None else "None"
                     )
                     .replace("startuptoreplace", str(kubernetes_startup_timeout))
                 )
+
                 print(line, end="")
         print("dag created!")
     if gcp:
