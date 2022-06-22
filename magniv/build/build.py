@@ -70,7 +70,7 @@ def get_tasks_from_file(filepath: str, root: str, req: str, used_keys: Dict) -> 
                     raise ValueError(
                         "Task missing required variables, please resolve by defining ("
                         + ",".join([f" {x} " for x in missing_reqs])
-                        + ") in the task decorator"
+                        + f') in the task decorator for function {info["name"]} at {info["location"]} line {info["line_number"]}'
                     )
                 if info["key"] in used_keys:
                     raise ValueError(
