@@ -106,7 +106,7 @@ def save_tasks(
         if os.path.exists(f"{task_folder}/{reqs_pth}"):
             root_req = task_folder + reqs_pth
         req = f"{root}/{reqs_pth}" if os.path.exists(f"{root}/{reqs_pth}") else root_req
-        if req == None:
+        if req is None:
             raise OSError(
                 f'requirements.txt not found for path "{root}", either add one to this directory or the root directory'
             )
