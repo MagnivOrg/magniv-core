@@ -18,7 +18,7 @@ def run(filepath, function_name):
     spec = importlib.util.spec_from_file_location(mod_name, filepath)
     mod = importlib.util.module_from_spec(spec)
     # Hack to fix project imports by adding project directory to Python path
-    sys.path.append(os.getcwd() + "/tasks")
+    sys.path.append(f"{os.getcwd()}/tasks")
     spec.loader.exec_module(mod)
     func = getattr(mod, function_name)
     return func()

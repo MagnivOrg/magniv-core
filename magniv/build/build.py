@@ -66,8 +66,7 @@ def get_tasks_from_file(filepath: str, root: str, req: str, used_keys: Dict) -> 
                 }
                 for kw in decorator.keywords:
                     info[kw.arg] = kw.value.value
-                missing_reqs = list({"schedule"} - set(info))
-                if len(missing_reqs) > 0:
+                if missing_reqs := list({"schedule"} - set(info)):
                     raise ValueError(
                         "Task missing required variables, please resolve by defining ("
                         + ",".join([f" {x} " for x in missing_reqs])
@@ -88,8 +87,8 @@ def save_tasks(
     dump_save_pth: str = "./dump.json",
     reqs_pth: str = "requirements.txt",
     root_req: None = None,
-    tasks_list: List = [],
-    used_keys: Dict = {},
+    tasks_list: List = None,
+    used_keys: Dict = None,
 ) -> NoReturn:
     """
     Save the decorated tasks to a json file.
@@ -102,6 +101,10 @@ def save_tasks(
     :param used_keys: The dictionary of used keys, defaults to {}
     :return: NoReturn
     """
+    if tasks_list is None:
+        tasks_list = []
+    if used_keys is None:
+        used_keys = {}
     for root, dirs, files in os.walk(task_folder):
         if os.path.exists(f"{task_folder}/{reqs_pth}"):
             root_req = task_folder + reqs_pth

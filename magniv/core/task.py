@@ -19,11 +19,10 @@ class Task:
     KEY_PATTERN = r"^[\w\-.]+$"
 
     def __init__(self, function, schedule=None, description=None, key=None) -> None:
-        if schedule is not None:
-            if not self._is_valid_schedule(schedule):
-                raise ValueError(f"{schedule} is not a valid cron schedule")
-        else:
+        if schedule is None:
             raise ValueError("Schedule must be provided")
+        if not self._is_valid_schedule(schedule):
+            raise ValueError(f"{schedule} is not a valid cron schedule")
         self.schedule = schedule
         self.description = description
         self.function = function
@@ -31,13 +30,10 @@ class Task:
         self.key = key
         if key is None:
             self.key = self.name
-        else:
-            if not self._is_valid_key(key):
-                raise ValueError(
-                    "{} is not a valid key, the key can only contain alphanumeric characters, -, _, . and space.".format(
-                        key
-                    )
-                )
+        elif not self._is_valid_key(key):
+            raise ValueError(
+                f"{key} is not a valid key, the key can only contain alphanumeric characters, -, _, . and space."
+            )
 
         update_wrapper(self, function)
 
@@ -81,7 +77,6 @@ def task(_func=None, *, schedule=None, description=None, key=None) -> Callable:
         raise ValueError("You must use arguments with magniv, it can not be called alone")
 
     def wrapper(function):
-        task_instance = Task(function, schedule=schedule, description=description, key=key)
-        return task_instance
+        return Task(function, schedule=schedule, description=description, key=key)
 
     return wrapper
