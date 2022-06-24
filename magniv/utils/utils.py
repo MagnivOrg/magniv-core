@@ -34,8 +34,8 @@ def _get_function_from_json(key, filepath):
     :param filepath: the path to the json file that contains the function information
     :return: The location and name of the function
     """
-    with open(filepath) as f:
-        task_info_list = json.load(f)
+    with open(filepath) as fo:
+        task_info_list = json.load(fo)
     task_info = next(task for task in task_info_list if task["key"] == key)
     return task_info["location"], task_info["name"]
 
