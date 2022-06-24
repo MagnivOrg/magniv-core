@@ -52,20 +52,20 @@ def get_tasks_from_file(filepath: str, root: str, req: str, used_keys: Dict) -> 
         )
     ]
     for node in decorated_nodes:
+        core_values = {
+            "location": filepath,
+            "name": node.name,
+            "python_version": _get_python_version(root),
+            "owner": _get_owner(root),
+            "requirements_location": req,
+            "line_number": node.lineno,
+            "key": node.name,
+            "description": None,
+        }
         for decorator in node.decorator_list:
             if not isinstance(decorator, ast.Name) and decorator.func.id == "task":
-                info = {
-                    "location": filepath,
-                    "name": node.name,
-                    "python_version": _get_python_version(root),
-                    "owner": _get_owner(root),
-                    "requirements_location": req,
-                    "line_number": node.lineno,
-                    "key": node.name,
-                    "description": None,
-                }
-                for kw in decorator.keywords:
-                    info[kw.arg] = kw.value.value
+                decorator_values = {kw.arg: kw.value.value for kw in decorator.keywords}
+                info = {**core_values, **decorator_values}
                 if missing_reqs := list({"schedule"} - set(info)):
                     raise ValueError(
                         "Task missing required variables, please resolve by defining ("
@@ -76,8 +76,7 @@ def get_tasks_from_file(filepath: str, root: str, req: str, used_keys: Dict) -> 
                     raise ValueError(
                         f'Task "{info["key"]}" in file {filepath} is using "{info["key"]}" as a key which is already used in {used_keys[info["key"]]}, please resolve by changing one of the keys'
                     )
-                else:
-                    used_keys[info["key"]] = filepath
+                used_keys[info["key"]] = filepath
                 tasks.append(info)
     return tasks, used_keys
 
@@ -105,9 +104,9 @@ def save_tasks(
         tasks_list = []
     if used_keys is None:
         used_keys = {}
+    if os.path.exists(f"{task_folder}/{reqs_pth}"):
+        root_req = task_folder + reqs_pth
     for root, dirs, files in os.walk(task_folder):
-        if os.path.exists(f"{task_folder}/{reqs_pth}"):
-            root_req = task_folder + reqs_pth
         req = f"{root}/{reqs_pth}" if os.path.exists(f"{root}/{reqs_pth}") else root_req
         if req is None:
             raise OSError(
