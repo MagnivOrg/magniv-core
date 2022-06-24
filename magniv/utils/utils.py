@@ -50,11 +50,15 @@ def _create_cloud_build(docker_image_info, gcp_dag_folder):
     :param gcp_dag_folder: The GCP bucket where the DAGs will be stored
     """
     with open("./cloudbuild.yaml", "w") as fo:
-        fo.write(f"steps:\n- name: gcr.io/cloud-builders/gsutil\n  args:\n    - '-m'\n    - 'rsync'\n    - '-d'\n    - '-r'\n    - 'dags'\n    - '{gcp_dag_folder}'")
+        fo.write(
+            f"steps:\n- name: gcr.io/cloud-builders/gsutil\n  args:\n    - '-m'\n    - 'rsync'\n    - '-d'\n    - '-r'\n    - 'dags'\n    - '{gcp_dag_folder}'"
+        )
         gcp_image_names = []
         for docker_info in docker_image_info:
             gcp_image_name = docker_info[0]
             path = docker_info[1]
             gcp_image_names.append(gcp_image_name)
-            fo.write(f"\n- name: 'gcr.io/cloud-builders/docker'\n  args: [ 'build', '-t','{gcp_image_name}', '-f', '{path}/Dockerfile', '.' ]")
+            fo.write(
+                f"\n- name: 'gcr.io/cloud-builders/docker'\n  args: [ 'build', '-t','{gcp_image_name}', '-f', '{path}/Dockerfile', '.' ]"
+            )
         fo.write("\nimages: [{}]".format(",".join(f"'{image}'" for image in gcp_image_names)))
