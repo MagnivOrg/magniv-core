@@ -25,21 +25,6 @@ def _get_tasks_json(filepath):
     return task_list
 
 
-def _get_function_from_json(key, filepath):
-    """
-    It takes a key and a filepath, and returns the location and name of the function that corresponds to
-    that key
-
-    :param key: the key of the task you want to run
-    :param filepath: the path to the json file that contains the function information
-    :return: The location and name of the function
-    """
-    with open(filepath) as fo:
-        task_info_list = json.load(fo)
-    task_info = next(task for task in task_info_list if task["key"] == key)
-    return task_info["location"], task_info["name"]
-
-
 def _create_cloud_build(docker_image_info, gcp_dag_folder):
     """
     It creates a cloudbuild.yaml file that will build all the docker images and then sync the dags
@@ -61,4 +46,6 @@ def _create_cloud_build(docker_image_info, gcp_dag_folder):
             fo.write(
                 f"\n- name: 'gcr.io/cloud-builders/docker'\n  args: [ 'build', '-t','{gcp_image_name}', '-f', '{path}/Dockerfile', '.' ]"
             )
-        fo.write("\nimages: [{}]".format(",".join(f"'{image}'" for image in gcp_image_names)))
+        fo.write(
+            "\nimages: [{}]".format(",".join(f"'{image}'" for image in gcp_image_names))
+        )
