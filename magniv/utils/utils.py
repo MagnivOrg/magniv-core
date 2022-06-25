@@ -46,6 +46,4 @@ def _create_cloud_build(docker_image_info, gcp_dag_folder):
             fo.write(
                 f"\n- name: 'gcr.io/cloud-builders/docker'\n  args: [ 'build', '-t','{gcp_image_name}', '-f', '{path}/Dockerfile', '.' ]"
             )
-        fo.write(
-            "\nimages: [{}]".format(",".join(f"'{image}'" for image in gcp_image_names))
-        )
+        fo.write("\nimages: [{}]".format(",".join(f"'{image}'" for image in gcp_image_names)))
