@@ -25,23 +25,6 @@ def _get_tasks_json(filepath):
     return task_list
 
 
-def _get_function_from_json(key, filepath):
-    """
-    It takes a key and a filepath, and returns the location and name of the function that corresponds to
-    that key
-
-    :param key: the key of the task you want to run
-    :param filepath: the path to the json file that contains the function information
-    :return: The location and name of the function
-    """
-    f = open(filepath)
-    task_info_list = json.load(f)
-    for task in task_info_list:
-        if task["key"] == key:
-            break
-    return task["location"], task["name"]
-
-
 def _create_cloud_build(docker_image_info, gcp_dag_folder):
     """
     It creates a cloudbuild.yaml file that will build all the docker images and then sync the dags
@@ -53,9 +36,7 @@ def _create_cloud_build(docker_image_info, gcp_dag_folder):
     """
     with open("./cloudbuild.yaml", "w") as fo:
         fo.write(
-            "steps:\n- name: gcr.io/cloud-builders/gsutil\n  args:\n    - '-m'\n    - 'rsync'\n    - '-d'\n    - '-r'\n    - 'dags'\n    - '{}'".format(
-                gcp_dag_folder
-            )
+            f"steps:\n- name: gcr.io/cloud-builders/gsutil\n  args:\n    - '-m'\n    - 'rsync'\n    - '-d'\n    - '-r'\n    - 'dags'\n    - '{gcp_dag_folder}'"
         )
         gcp_image_names = []
         for docker_info in docker_image_info:
@@ -63,8 +44,6 @@ def _create_cloud_build(docker_image_info, gcp_dag_folder):
             path = docker_info[1]
             gcp_image_names.append(gcp_image_name)
             fo.write(
-                "\n- name: 'gcr.io/cloud-builders/docker'\n  args: [ 'build', '-t','{}', '-f', '{}/Dockerfile', '.' ]".format(
-                    gcp_image_name, path
-                )
+                f"\n- name: 'gcr.io/cloud-builders/docker'\n  args: [ 'build', '-t','{gcp_image_name}', '-f', '{path}/Dockerfile', '.' ]"
             )
         fo.write("\nimages: [{}]".format(",".join(f"'{image}'" for image in gcp_image_names)))

@@ -36,7 +36,7 @@ def export_to_airflow(
     docker_image_info = []
     for task_info in task_list:
         print("starting task .... ")
-        new_filename = "dags/{}/{}.py".format(task_info["owner"], task_info["key"])
+        new_filename = f'dags/{task_info["owner"]}/{task_info["key"]}.py'
         print(new_filename)
         if not os.path.exists("dags/"):
             os.mkdir("dags")
