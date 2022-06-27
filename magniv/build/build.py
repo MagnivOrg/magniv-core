@@ -166,13 +166,14 @@ def save_tasks(
       reqs_pth (str): The path to the requirements.txt file. Defaults to requirements.txt
       tasks_list (List): List = None
     """
-    if os.path.exists(f"{task_folder}/{reqs_pth}"):
-        root_req = task_folder + reqs_pth
-        task_files = get_task_files(task_folder, reqs_pth, root_req)
-        tasks_list = get_task_list(task_files, task_folder, root_req)
-        if save_dir:
-            dump_save_pth = task_folder + dump_save_pth[1:]
-        _save_to_json(tasks_list, filepath=dump_save_pth)
+    if not os.path.exists(f"{task_folder}/{reqs_pth}"):
+        raise OSError(f"{task_folder}/{reqs_pth} not found")
+    root_req = task_folder + reqs_pth
+    task_files = get_task_files(task_folder, reqs_pth, root_req)
+    tasks_list = get_task_list(task_files, task_folder, root_req)
+    if save_dir:
+        dump_save_pth = task_folder + dump_save_pth[1:]
+    _save_to_json(tasks_list, filepath=dump_save_pth)
 
 
 def build(task_folder: str = None):
