@@ -104,7 +104,7 @@ class TestBuild:
 
     def test_save(self, file):
         """
-        `save_tasks` is a function that takes a folder path as an argument and saves all the tasks in        
+        `save_tasks` is a function that takes a folder path as an argument and saves all the tasks in
         :param file: This is the path to the folder where the tasks are stored
         """
         json_pth = f"{file}/dump.json"
