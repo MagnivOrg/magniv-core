@@ -26,14 +26,17 @@ Schematics:
 
 ```
 build.py:
-	Totest:
-	Testing:
-		requirements in nested dir
-		requirements top level dir
-		gets list of decorated nodes from ast
-		gets all decorated tasks from file as list
-		finds all files in dir that have magniv task decorators
-		saves dump.json to expected path
-		throws oserror if no file with decorated task is found
-		throws oserror if dir specified dir not found
+    integration_tests:
+        - test_name
+    unit_tests:
+        todo:
+        test_build.py:
+            - requirements in nested dir
+            - requirements top level dir
+            - gets list of decorated nodes from ast
+            - gets all decorated tasks from file as list
+            - finds all files in dir that have magniv task decorators
+            - saves dump.json to expected path
+            - throws oserror if no file with decorated task is found
+            - throws oserror if dir specified dir not found
 ```
