@@ -115,7 +115,7 @@ def get_task_files(task_folder: str, reqs_pth: str, root_req: str) -> List:
             if file_name.endswith(".py"):
                 filepath = f"{root}/{file_name}"
                 task_files.append(filepath)
-    return task_files, req
+    return task_files
 
 
 def get_task_list(
@@ -144,7 +144,7 @@ def get_task_list(
             parsed_ast = ast.parse(f.read())
             decorated_nodes = get_decorated_nodes(parsed_ast)
             tasks_list, used_keys = get_tasks_from_file(
-                decorated_nodes, root=task_folder, req=req, used_keys=used_keys
+                filepath, decorated_nodes, root=task_folder, req=req, used_keys=used_keys
             )
     return tasks_list
 
