@@ -5,6 +5,7 @@ from typing import Union
 import pytest
 
 from magniv.build.build import (
+    build,
     get_decorated_nodes,
     get_task_files,
     get_task_list,
@@ -37,11 +38,6 @@ class TestBuild:
         tmpdir.mkdir("tasks").join("main.py").write(TEST_FILE)
         tmpdir.join("tasks/requirements.txt").write("magniv")
         return str(tmpdir.join("tasks"))
-
-    # @pytest.fixture
-    # def reqs_file(self, tmpdir):
-    #     tmpdir.mkdir("tasks").join("requirements.txt").write("magniv")
-    #     return str(tmpdir.join("tasks"))
 
     def get_ast(self, file) -> Union[ast.AST, str]:
         """
@@ -106,6 +102,15 @@ class TestBuild:
         )
         assert task_files[0] == f"{file}/main.py"
 
+    def test_save(self, file):
+        """
+        `save_tasks` is a function that takes a folder path as an argument and saves all the tasks in        
+        :param file: This is the path to the folder where the tasks are stored
+        """
+        json_pth = f"{file}/dump.json"
+        save_tasks(task_folder=file, dump_save_pth=json_pth)
+        assert os.path.exists(json_pth) is True
+
     def test_build(self, file):
         """
         `build` is a function that takes a filepath and a task_folder argument and saves all the tasks
@@ -114,8 +119,10 @@ class TestBuild:
         :param file: a filepath to a Python file
         """
         json_pth = f"{file}/dump.json"
-        save_tasks(task_folder=file, dump_save_pth=json_pth)
-        assert os.path.exists(json_pth) == True
+        build(task_folder=file)
+        assert os.path.exists(json_pth) is True
+        with pytest.raises(OSError):
+            build(task_folder="")
 
     def test_reqs_dependency(self):
         """
@@ -134,7 +141,7 @@ class TestBuild:
         :return: The path to the requirements.txt file.
         """
         tmpdir.mkdir("tasks").mkdir("subdir").mkdir("subsubdir").join("requirements.txt").write(
-            ""
+            "magniv"
         )
         return str(tmpdir.join("tasks/subdir/subsubdir"))
 
