@@ -37,3 +37,6 @@ jobs:
       - name: Lint with isort
         run: |
           isort . --check --profile black --line-length=98
+      - name: Python tests
+        run: |
+          coverage run -m pytest tests

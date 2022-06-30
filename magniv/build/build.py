@@ -28,22 +28,18 @@ def _get_owner(root):
     return "local"
 
 
-def get_tasks_from_file(filepath: str, root: str, req: str, used_keys: Dict) -> Tuple[List, Dict]:
+def get_decorated_nodes(parsed_ast: ast.AST) -> List:
     """
-    > This function takes a filepath, root, req, and used_keys as arguments and returns a dictionary of
-    tasks and used_keys
+    It returns a list of all function and async function definitions in the AST that have at least one
+    decorator
 
-    :param filepath: The path to the file that contains the task
-    :param root: The root directory of the project
-    :param req: The location of the requirements.txt file
-    :param used_keys: This is a dictionary of keys that have been used so far. This is used to ensure
-    that no two tasks have the same key
-    :return: A list of dictionaries, each dictionary is a task.
+    Args:
+      parsed_ast (ast.AST): The parsed AST of the file.
+
+    Returns:
+      A list of nodes that are either a FunctionDef or AsyncFunctionDef and have a decorator_list.
     """
-    tasks = []
-    with open(filepath) as file:
-        parsed_ast = ast.parse(file.read())
-    decorated_nodes = [
+    return [
         node
         for node in ast.walk(parsed_ast)
         if (
@@ -51,6 +47,24 @@ def get_tasks_from_file(filepath: str, root: str, req: str, used_keys: Dict) -> 
             and len(node.decorator_list) > 0
         )
     ]
+
+
+def get_tasks_from_file(
+    filepath: str, decorated_nodes: List, root: str, req: str, used_keys: Dict
+) -> Tuple[List, Dict]:
+    """
+    "Get tasks from a file."
+
+    The first line of the docstring is a one sentence summary of the function
+
+    Args:
+      filepath (str): The path to the file that contains the tasks.
+      decorated_nodes (List): A list of all the nodes in the graph.
+      root (str): The root directory of the project.
+      req (str): The requirement file that is being parsed.
+      used_keys (Dict): A dictionary of keys that have been used in the file.
+    """
+    tasks = []
     for node in decorated_nodes:
         core_values = {
             "location": filepath,
@@ -81,31 +95,16 @@ def get_tasks_from_file(filepath: str, root: str, req: str, used_keys: Dict) -> 
     return tasks, used_keys
 
 
-def save_tasks(
-    task_folder: str,
-    dump_save_pth: str = "./dump.json",
-    reqs_pth: str = "requirements.txt",
-    root_req: None = None,
-    tasks_list: List = None,
-    used_keys: Dict = None,
-) -> NoReturn:
+def get_task_files(task_folder: str, reqs_pth: str, root_req: str) -> List:
     """
-    Save the decorated tasks to a json file.
+    > Get all the files in a task folder, including the files in the requirements folder
 
-    :param task_folder: The folder where the tasks are located
-    :param dump_save_pth: The path to the file where the dump will be saved, defaults to ./dump.json
-    :param reqs_pth: The path to the requirements.txt file, defaults to /requirements.txt
-    :param root_req: The root requirement file to use, defaults to None
-    :param tasks_list: The list of tasks to save, defaults to []
-    :param used_keys: The dictionary of used keys, defaults to {}
-    :return: NoReturn
+    Args:
+      task_folder (str): the folder where the task is located
+      reqs_pth (str): the path to the requirements.txt file
+      root_req (str): The name of the root requirement file.
     """
-    if tasks_list is None:
-        tasks_list = []
-    if used_keys is None:
-        used_keys = {}
-    if os.path.exists(f"{task_folder}/{reqs_pth}"):
-        root_req = task_folder + reqs_pth
+    task_files = []
     for root, dirs, files in os.walk(task_folder):
         req = f"{root}/{reqs_pth}" if os.path.exists(f"{root}/{reqs_pth}") else root_req
         if req is None:
@@ -113,23 +112,82 @@ def save_tasks(
                 f'requirements.txt not found for path "{root}", either add one to this directory or the root directory'
             )
         for file_name in files:
-            ext = os.path.splitext(file_name)[-1].lower()
-            if ext == ".py":
+            if file_name.endswith(".py"):
                 filepath = f"{root}/{file_name}"
-                tasks, used_keys = get_tasks_from_file(filepath, root, req, used_keys)
-                tasks_list.extend(tasks)
-        _save_to_json(tasks_list, filepath=dump_save_pth)
+                task_files.append(filepath)
+    return task_files
 
 
-def build():
+def get_task_list(
+    task_files: List,
+    task_folder: str = None,
+    req: str = None,
+    tasks_list: List = None,
+    used_keys: Dict = None,
+) -> List:
+    """
+    "Get a list of tasks from a list of task files."
+
+    Args:
+      task_files (List): List of task files to be processed.
+      task_folder (str): The folder where the tasks are located.
+      req (str): The requirement file to be used.
+      tasks_list (List): This is the list of tasks that will be returned.
+      used_keys (Dict): A dictionary of keys that have already been used.
+    """
+    if tasks_list is None:
+        tasks_list = []
+    if used_keys is None:
+        used_keys = {}
+    for filepath in task_files:
+        with open(filepath) as f:
+            parsed_ast = ast.parse(f.read())
+            decorated_nodes = get_decorated_nodes(parsed_ast)
+            tasks_list, used_keys = get_tasks_from_file(
+                filepath, decorated_nodes, root=task_folder, req=req, used_keys=used_keys
+            )
+    return tasks_list
+
+
+def save_tasks(
+    task_folder: str,
+    save_dir: bool = False,
+    dump_save_pth: str = "./dump.json",
+    reqs_pth: str = "requirements.txt",
+    tasks_list: List = None,
+) -> NoReturn:
+    """
+    `save_tasks` saves a list of tasks to a file
+
+    Args:
+      task_folder (str): The folder where the tasks are located.
+      save_dir (bool): If True, the directory of the task will be saved. Defaults to False
+      dump_save_pth (str): The path to the file where the dump will be saved. Defaults to ./dump.json
+      reqs_pth (str): The path to the requirements.txt file. Defaults to requirements.txt
+      tasks_list (List): List = None
+    """
+    if not os.path.exists(f"{task_folder}/{reqs_pth}"):
+        raise OSError(f"{task_folder}/{reqs_pth} not found")
+    root_req = task_folder + reqs_pth
+    task_files = get_task_files(task_folder, reqs_pth, root_req)
+    tasks_list = get_task_list(task_files, task_folder, root_req)
+    if save_dir:
+        dump_save_pth = task_folder + dump_save_pth[1:]
+    _save_to_json(tasks_list, filepath=dump_save_pth)
+
+
+def build(task_folder: str = None):
     """
     We walk through the `tasks` directory, and for each file we find, we check if it's a Python file,
     and if it is, we get the tasks from it and add them to our list of tasks
     """
-    task_folder = "./tasks"
+    if task_folder is None:
+        task_folder = "./tasks"
+    else:
+        save_dir = True
     if not os.path.exists(task_folder):
         raise OSError("You must have a tasks folder that contains all of your tasks files")
 
     # Hack to fix project imports by adding project directory to Python path
     sys.path.append(os.getcwd() + task_folder)
-    save_tasks(task_folder)
+    save_tasks(task_folder, save_dir)
