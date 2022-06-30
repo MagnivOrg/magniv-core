@@ -113,18 +113,16 @@ def _create_docker_image(
         environment_arguments = "\n".join(
             [f'ENV {key}="{env_values_dict[key]}"' for key in env_values_dict]
         )
-    dockerfile = """
+    dockerfile = f"""
 # syntax=docker/dockerfile:1
 
-FROM python:{}
-COPY {} requirements.txt
-{}
+FROM python:{python_version}
+COPY {requirements} requirements.txt
+{environment_arguments}
 RUN pip3 install -r requirements.txt
 
 COPY . .
-                """.format(
-        python_version, requirements, environment_arguments
-    )
+                """
     with open(f"{path}/Dockerfile", "w") as fo:
         fo.write(dockerfile)
     docker_name = f"{key}dockerimage"
