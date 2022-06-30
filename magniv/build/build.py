@@ -49,13 +49,11 @@ def get_decorated_nodes(parsed_ast: ast.AST) -> List:
     ]
 
 
-def get_tasks_from_file(
+def get_magniv_tasks(
     filepath: str, decorated_nodes: List, root: str, req: str, used_keys: Dict
 ) -> Tuple[List, Dict]:
     """
-    "Get tasks from a file."
-
-    The first line of the docstring is a one sentence summary of the function
+    It returns all Magniv decorated tasks from a list of python functions that are decorated
 
     Args:
       filepath (str): The path to the file that contains the tasks.
@@ -92,7 +90,7 @@ def get_tasks_from_file(
                     )
                 used_keys[info["key"]] = filepath
                 tasks.append(info)
-    return tasks, used_keys
+    return tasks
 
 
 def get_task_files(task_folder: str, reqs_pth: str, root_req: str) -> List:
@@ -143,8 +141,10 @@ def get_task_list(
         with open(filepath) as f:
             parsed_ast = ast.parse(f.read())
             decorated_nodes = get_decorated_nodes(parsed_ast)
-            tasks_list, used_keys = get_tasks_from_file(
-                filepath, decorated_nodes, root=task_folder, req=req, used_keys=used_keys
+            tasks_list.extend(
+                get_magniv_tasks(
+                    filepath, decorated_nodes, root=task_folder, req=req, used_keys=used_keys
+                )
             )
     return tasks_list
 
@@ -168,7 +168,7 @@ def save_tasks(
     """
     if not os.path.exists(f"{task_folder}/{reqs_pth}"):
         raise OSError(f"{task_folder}/{reqs_pth} not found")
-    root_req = task_folder + reqs_pth
+    root_req = f"{task_folder}/{reqs_pth}"
     task_files = get_task_files(task_folder, reqs_pth, root_req)
     tasks_list = get_task_list(task_files, task_folder, root_req)
     if save_dir:
@@ -181,6 +181,7 @@ def build(task_folder: str = None):
     We walk through the `tasks` directory, and for each file we find, we check if it's a Python file,
     and if it is, we get the tasks from it and add them to our list of tasks
     """
+    save_dir = False
     if task_folder is None:
         task_folder = "./tasks"
     else:
@@ -190,4 +191,4 @@ def build(task_folder: str = None):
 
     # Hack to fix project imports by adding project directory to Python path
     sys.path.append(os.getcwd() + task_folder)
-    save_tasks(task_folder, save_dir)
+    save_tasks(task_folder, save_dir=save_dir)

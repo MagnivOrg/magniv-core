@@ -4,14 +4,11 @@ from typing import Union
 
 import pytest
 
-from magniv.build.build import (
-    build,
-    get_decorated_nodes,
-    get_task_files,
-    get_task_list,
-    get_tasks_from_file,
-    save_tasks,
-)
+# fmt: off
+from magniv.build.build import (build, get_decorated_nodes, get_magniv_tasks, get_task_files,
+                                get_task_list, save_tasks)
+
+# fmt: on
 
 TEST_FILE = """from datetime import datetime
 
@@ -59,19 +56,20 @@ class TestBuild:
         assert decorated_nodes[0].decorator_list[0].keywords[0].arg == "schedule"
         assert decorated_nodes[0].decorator_list[0].keywords[0].value.s == "@hourly"
 
-    def test_get_tasks_from_file(self, file):
+    def test_get_magniv_tasks(self, file):
         """
         It takes a filepath, parses the file, finds all the decorated functions, and returns a list of
         dictionaries containing the information about each task
         """
         parsed_ast, filepath = self.get_ast(file)
         decorated_nodes = get_decorated_nodes(parsed_ast)
-        tasks, used_keys = get_tasks_from_file(
+        used_keys = {}
+        tasks = get_magniv_tasks(
             filepath,
             decorated_nodes,
             root="tests/unit_tests",
             req="requirements.txt",
-            used_keys={},
+            used_keys=used_keys,
         )
         assert tasks[0]["name"] == "hello_world"
         assert tasks[0]["schedule"] == "@hourly"
