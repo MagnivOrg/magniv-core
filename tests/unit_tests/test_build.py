@@ -83,7 +83,7 @@ class TestBuild:
         It takes a filepath, parses the file, finds all the decorated functions, and returns a list of
         dictionaries containing the information about each task
         """
-        task_list = get_task_list([f"{file}/main.py"])
+        task_list = get_task_list([{"filepath": f"{file}/main.py", "req": None}])
         assert task_list[0]["name"] == "hello_world"
         assert task_list[0]["schedule"] == "@hourly"
         assert task_list[0]["location"] == f"{file}/main.py"
@@ -96,9 +96,9 @@ class TestBuild:
         filepaths to all the files in that folder
         """
         task_files = get_task_files(
-            file, "requirements.txt", root_req=f"{str(file)}/requirements.txt"
+            file,
         )
-        assert task_files[0] == f"{file}/main.py"
+        assert task_files[0]["filepath"] == f"{file}/main.py"
 
     def test_save(self, file):
         """
