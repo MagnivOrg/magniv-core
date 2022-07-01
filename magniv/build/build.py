@@ -93,33 +93,35 @@ def get_magniv_tasks(
     return tasks
 
 
-def get_task_files(task_folder: str, reqs_pth: str, root_req: str) -> List:
+def get_task_files(task_folder: str) -> List:
     """
-    > Get all the files in a task folder, including the files in the requirements folder
+    Get all the files in a task folder
 
     Args:
       task_folder (str): the folder where the task is located
-      reqs_pth (str): the path to the requirements.txt file
-      root_req (str): The name of the root requirement file.
     """
+    root_req = f"{task_folder}/requirements.txt"
+    if not os.path.exists(root_req):
+        raise OSError(f"{root_req} not found")
     task_files = []
     for root, dirs, files in os.walk(task_folder):
-        req = f"{root}/{reqs_pth}" if os.path.exists(f"{root}/{reqs_pth}") else root_req
+        req = (
+            f"{root}/requirements.txt" if os.path.exists(f"{root}/requirements.txt") else root_req
+        )
         if req is None:
             raise OSError(
                 f'requirements.txt not found for path "{root}", either add one to this directory or the root directory'
             )
         for file_name in files:
             if file_name.endswith(".py"):
-                filepath = f"{root}/{file_name}"
-                task_files.append(filepath)
+                fileinfo = {"filepath": f"{root}/{file_name}", "req": req}
+                task_files.append(fileinfo)
     return task_files
 
 
 def get_task_list(
     task_files: List,
     task_folder: str = None,
-    req: str = None,
     tasks_list: List = None,
     used_keys: Dict = None,
 ) -> List:
@@ -129,7 +131,6 @@ def get_task_list(
     Args:
       task_files (List): List of task files to be processed.
       task_folder (str): The folder where the tasks are located.
-      req (str): The requirement file to be used.
       tasks_list (List): This is the list of tasks that will be returned.
       used_keys (Dict): A dictionary of keys that have already been used.
     """
@@ -137,13 +138,17 @@ def get_task_list(
         tasks_list = []
     if used_keys is None:
         used_keys = {}
-    for filepath in task_files:
-        with open(filepath) as f:
+    for fileinfo in task_files:
+        with open(fileinfo["filepath"]) as f:
             parsed_ast = ast.parse(f.read())
             decorated_nodes = get_decorated_nodes(parsed_ast)
             tasks_list.extend(
                 get_magniv_tasks(
-                    filepath, decorated_nodes, root=task_folder, req=req, used_keys=used_keys
+                    fileinfo["filepath"],
+                    decorated_nodes,
+                    root=task_folder,
+                    req=fileinfo["req"],
+                    used_keys=used_keys,
                 )
             )
     return tasks_list
@@ -153,7 +158,6 @@ def save_tasks(
     task_folder: str,
     save_dir: bool = False,
     dump_save_pth: str = "./dump.json",
-    reqs_pth: str = "requirements.txt",
     tasks_list: List = None,
 ) -> NoReturn:
     """
@@ -163,14 +167,10 @@ def save_tasks(
       task_folder (str): The folder where the tasks are located.
       save_dir (bool): If True, the directory of the task will be saved. Defaults to False
       dump_save_pth (str): The path to the file where the dump will be saved. Defaults to ./dump.json
-      reqs_pth (str): The path to the requirements.txt file. Defaults to requirements.txt
       tasks_list (List): List = None
     """
-    if not os.path.exists(f"{task_folder}/{reqs_pth}"):
-        raise OSError(f"{task_folder}/{reqs_pth} not found")
-    root_req = f"{task_folder}/{reqs_pth}"
-    task_files = get_task_files(task_folder, reqs_pth, root_req)
-    tasks_list = get_task_list(task_files, task_folder, root_req)
+    task_files = get_task_files(task_folder)
+    tasks_list = get_task_list(task_files, task_folder)
     if save_dir:
         dump_save_pth = task_folder + dump_save_pth[1:]
     _save_to_json(tasks_list, filepath=dump_save_pth)
