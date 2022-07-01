@@ -9,7 +9,6 @@ from magniv.build.build import (build, get_decorated_nodes, get_magniv_tasks,
                                 get_task_files, get_task_list, save_tasks)
 
 # fmt: on
-
 TEST_FILE = """from datetime import datetime
 
 from magniv.core import task
