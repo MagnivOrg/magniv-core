@@ -19,6 +19,10 @@ from magniv.core import task
 def hello_world():
     print(f"Hello world, the time is {datetime.now()}")
 
+@task(schedule="@daily", description="Hello world, printing a second time")
+def hello_world_2():
+    print(f"Hello world, the time is {datetime.now()}")
+
 
 def dummy_task():
     print("This is a dummy task")
@@ -36,6 +40,12 @@ class TestBuild:
         tmpdir.join("tasks/requirements.txt").write("magniv")
         return str(tmpdir.join("tasks"))
 
+    def _extracted_from_test_get_decorated_nodes(self, decorated_nodes, arg1, arg2, arg3):
+        assert decorated_nodes[arg1].name == arg2
+        assert decorated_nodes[arg1].decorator_list[0].func.id == "task"
+        assert decorated_nodes[arg1].decorator_list[0].keywords[0].arg == "schedule"
+        assert decorated_nodes[arg1].decorator_list[0].keywords[0].value.s == arg3
+
     def get_ast(self, file) -> Union[ast.AST, str]:
         """
         It opens a file, reads it, and parses it into an AST
@@ -51,10 +61,12 @@ class TestBuild:
         """
         parsed_ast, filepath = self.get_ast(file)
         decorated_nodes = get_decorated_nodes(parsed_ast)
-        assert decorated_nodes[0].name == "hello_world"
-        assert decorated_nodes[0].decorator_list[0].func.id == "task"
-        assert decorated_nodes[0].decorator_list[0].keywords[0].arg == "schedule"
-        assert decorated_nodes[0].decorator_list[0].keywords[0].value.s == "@hourly"
+        self._extracted_from_test_get_decorated_nodes(
+            decorated_nodes, 0, "hello_world", "@hourly"
+        )
+        self._extracted_from_test_get_decorated_nodes(
+            decorated_nodes, 1, "hello_world_2", "@daily"
+        )
 
     def test_get_magniv_tasks(self, file):
         """
