@@ -5,8 +5,8 @@ from typing import Union
 import pytest
 
 # fmt: off
-from magniv.build.build import (build, get_decorated_nodes, get_magniv_tasks, get_task_files,
-                                get_task_list, save_tasks)
+from magniv.build.build import (build, get_decorated_nodes, get_magniv_tasks,
+                                get_task_files, get_task_list, save_tasks)
 
 # fmt: on
 
