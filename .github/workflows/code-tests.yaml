@@ -33,10 +33,10 @@ jobs:
           flake8 . --count --exit-zero --max-line-length=98 --statistics
       - name: Lint with black
         run: |
-          black . --check --profile black --line-length=98
+          black . --check --line-length=98
       - name: Lint with isort
         run: |
-          isort . --check --line-length=98
+          isort . --check --profile black --line-length=98
       - name: Python tests
         run: |
           coverage run -m pytest tests
