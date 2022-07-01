@@ -4,7 +4,6 @@ from typing import Union
 
 import pytest
 
-# fmt: off
 from magniv.build.build import (
     build,
     get_decorated_nodes,
@@ -14,7 +13,6 @@ from magniv.build.build import (
     save_tasks,
 )
 
-# fmt: on
 TEST_FILE = """from datetime import datetime
 
 from magniv.core import task
