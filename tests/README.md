@@ -27,7 +27,12 @@ Schematics:
 ```
 build.py:
     integration_tests:
-        - test_name
+        todo:
+	    - test where there are nested folders with tasks in them, make sure that all those tasks show in the `dump.json` and that the `dump.json` is accurate
+	    - test when there are multiple task files in the same folder and make sure all of them show up
+	    - test when there is a nested folder that has its own `requirements.txt` -- verify that the `dump.json` reflects that the correct `requirements.txt` is being used
+	    - test when there is a nested folder w/o a `requirements.txt`, make sure it uses the next parents `requirements.txt`
+	- test_name
     unit_tests:
         todo:
         test_build.py:
@@ -39,4 +44,5 @@ build.py:
             - saves dump.json to expected path
             - throws oserror if no file with decorated task is found
             - throws oserror if dir specified dir not found
+	    - multiple tasks within one file 
 ```
