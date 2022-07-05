@@ -13,7 +13,7 @@ ______________________________________________________________________
 
 <div align="left">
 
-### Magniv is the easiest way to build and deploy data applications, pipelines, or cron-like jobs. A Python decorator based orchestration library at the core, Magniv allows data scientists and developers to schedule arbitrary functions in one line. Monitoring, CI/CD, and compute management all come out of the box using the Magniv in a fully-managed context.
+**Magniv is the easiest way to build and deploy data applications, pipelines, or cron-like jobs. A Python decorator based orchestration library at the core, Magniv allows data scientists and developers to schedule arbitrary functions in one line. Monitoring, CI/CD, and compute management all come out of the box using the Magniv in a fully-managed context.**
 
 ## Quickstart ⚡
 
