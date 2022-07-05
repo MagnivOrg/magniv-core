@@ -9,10 +9,11 @@
 <a href="https://docs.magniv.io"><img alt="Docs" src="https://custom-icon-badges.herokuapp.com/badge/docs-magniv-blue.svg?logo=magniv&style=for-the-badge&logoColor=white"></a>
 <a href="https://www.loom.com/share/320a5e9750904f1da250ce1d4dfcd909"><img alt="Demo with Loom" src="https://img.shields.io/badge/Demo-loom-552586.svg?logo=loom&style=for-the-badge&labelColor=gray"></a>
 
-
 ______________________________________________________________________
 
 <div align="left">
+
+### Magniv is the easiest way to build and deploy data applications, pipelines, or cron-like jobs. A Python decorator based orchestration library at the core, Magniv allows data scientists and developers to schedule arbitrary functions in one line. Monitoring, CI/CD, and compute management all come out of the box using the Magniv in a fully-managed context.
 
 ## Quickstart ⚡
 
