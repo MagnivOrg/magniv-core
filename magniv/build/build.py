@@ -95,10 +95,14 @@ def get_magniv_tasks(
 
 def get_task_files(task_folder: str) -> List:
     """
-    Get all the files in a task folder
+    It gets all the files in a task folder
 
     Args:
       task_folder (str): the folder where the task is located
+
+    Returns:
+      A list of dictionaries, each dictionary contains the filepath and the requirements file for that
+    file.
     """
     root_req = f"{task_folder}/requirements.txt"
     if not os.path.exists(root_req):
@@ -161,7 +165,7 @@ def save_tasks(
     tasks_list: List = None,
 ) -> NoReturn:
     """
-    `save_tasks` saves a list of tasks to a file
+    `save_tasks` saves a list of tasks to a json file
 
     Args:
       task_folder (str): The folder where the tasks are located.
@@ -180,6 +184,10 @@ def build(task_folder: str = None):
     """
     We walk through the `tasks` directory, and for each file we find, we check if it's a Python file,
     and if it is, we get the tasks from it and add them to our list of tasks
+
+    Args:
+      task_folder (str): The folder that contains all of your tasks files. If you don't specify this, it
+    will default to `./tasks`
     """
     save_dir = False
     if task_folder is None:

@@ -4,7 +4,6 @@ from typing import Union
 
 import pytest
 
-# fmt: off
 from magniv.build.build import (
     build,
     get_decorated_nodes,
@@ -14,14 +13,17 @@ from magniv.build.build import (
     save_tasks,
 )
 
-# fmt: on
 TEST_FILE = """from datetime import datetime
 
 from magniv.core import task
 
 
-@task(schedule="@hourly", description="Hello world, printing the time")
+@task(schedule="@hourly", description="Hello world, printing the time", key="goodbye_world_1")
 def hello_world():
+    print(f"Hello world, the time is {datetime.now()}")
+
+@task(schedule="@daily", description="Hello world, printing a second time", key="goodbye_world_2")
+def hello_world_2():
     print(f"Hello world, the time is {datetime.now()}")
 
 
@@ -41,6 +43,13 @@ class TestBuild:
         tmpdir.join("tasks/requirements.txt").write("magniv")
         return str(tmpdir.join("tasks"))
 
+    def _extracted_from_test_get_decorated_nodes(self, decorated_nodes, arg1, arg2, arg3, arg4):
+        assert decorated_nodes[arg1].name == arg2
+        assert decorated_nodes[arg1].decorator_list[0].func.id == "task"
+        assert decorated_nodes[arg1].decorator_list[0].keywords[0].arg == "schedule"
+        assert decorated_nodes[arg1].decorator_list[0].keywords[0].value.s == arg3
+        assert decorated_nodes[arg1].decorator_list[0].keywords[2].value.s == arg4
+
     def get_ast(self, file) -> Union[ast.AST, str]:
         """
         It opens a file, reads it, and parses it into an AST
@@ -56,10 +65,12 @@ class TestBuild:
         """
         parsed_ast, filepath = self.get_ast(file)
         decorated_nodes = get_decorated_nodes(parsed_ast)
-        assert decorated_nodes[0].name == "hello_world"
-        assert decorated_nodes[0].decorator_list[0].func.id == "task"
-        assert decorated_nodes[0].decorator_list[0].keywords[0].arg == "schedule"
-        assert decorated_nodes[0].decorator_list[0].keywords[0].value.s == "@hourly"
+        self._extracted_from_test_get_decorated_nodes(
+            decorated_nodes, 0, "hello_world", "@hourly", "goodbye_world_1"
+        )
+        self._extracted_from_test_get_decorated_nodes(
+            decorated_nodes, 1, "hello_world_2", "@daily", "goodbye_world_2"
+        )
 
     def test_get_magniv_tasks(self, file):
         """
@@ -81,7 +92,8 @@ class TestBuild:
         assert tasks[0]["location"] == filepath
         assert tasks[0]["requirements_location"] == "requirements.txt"
         assert tasks[0]["description"] == "Hello world, printing the time"
-        assert used_keys["hello_world"] == filepath
+        assert used_keys["goodbye_world_1"] == filepath
+        assert used_keys["goodbye_world_2"] == filepath
 
     def test_get_tasklist(self, file):
         """
