@@ -169,4 +169,4 @@ class TestBuild:
         """
         json_pth = f"{subdir_reqs_file}/dump.json"
         save_tasks(task_folder=subdir_reqs_file, dump_save_pth=json_pth)
-        assert os.path.exists(json_pth) == True
+        assert os.path.exists(json_pth) is True
