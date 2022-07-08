@@ -7,12 +7,13 @@
 <a href="https://actions-badge.atrox.dev/MagnivOrg/magniv-core/goto?ref=master"><img alt="Build" src="https://img.shields.io/github/workflow/status/MagnivOrg/magniv-core/CI%20tests/master?style=for-the-badge" /></a>
 <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/-Python 3.8+-blue?style=for-the-badge&logo=python&logoColor=white"></a>
 <a href="https://docs.magniv.io"><img alt="Docs" src="https://custom-icon-badges.herokuapp.com/badge/docs-magniv-blue.svg?logo=magniv&style=for-the-badge&logoColor=white"></a>
-<a href="https://www.loom.com/share/320a5e9750904f1da250ce1d4dfcd909"><img alt="Demo with Loom" src="https://img.shields.io/badge/Demo-loom-552586.svg?logo=loom&style=for-the-badge&labelColor=gray"></a>
-
+<a href="https://www.loom.com/share/35ae5bb7a4b54200a9c5442e50c54aca"><img alt="Demo with Loom" src="https://img.shields.io/badge/Demo-loom-552586.svg?logo=loom&style=for-the-badge&labelColor=gray"></a>
 
 ______________________________________________________________________
 
 <div align="left">
+
+Magniv is the easiest way to build and deploy data applications, pipelines, or cron-like jobs. A Python decorator based orchestration library at the core, Magniv allows data scientists and developers to schedule arbitrary functions in one line. Monitoring, CI/CD, and compute management all come out of the box using the Magniv in a fully-managed context.
 
 ## Quickstart ⚡
 
