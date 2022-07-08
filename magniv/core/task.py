@@ -2,6 +2,8 @@ import re
 from functools import update_wrapper
 from typing import Callable
 
+from magniv.artifacts.store import MagnivStore
+
 
 class Task:
     """
@@ -18,7 +20,9 @@ class Task:
     CRON_PATTERN = r"(^((\*\/)?([1-5]?[0-9])((\,|\-|\/)\d+)*|\*)\s((\*\/)?((2[0-3]|1[0-9]|[0-9]))((\,|\-|\/)\d+)*|\*)\s((\*\/)?([1-9]|[12][0-9]|3[01])((\,|\-|\/)\d+)*|\*)\s((\*\/)?([1-9]|1[0-2])((\,|\-|\/)\d+)*|\*)\s((\*\/)?[0-6]((\,|\-|\/)\d+)*|\*)$)|@(annually|yearly|monthly|weekly|daily|hourly|reboot)"
     KEY_PATTERN = r"^[\w\-.]+$"
 
-    def __init__(self, function, schedule=None, description=None, key=None) -> None:
+    def __init__(
+        self, function, schedule=None, description=None, key=None, store: bool = False
+    ) -> None:
         if schedule is None:
             raise ValueError("Schedule must be provided")
         if not self._is_valid_schedule(schedule):
@@ -28,17 +32,34 @@ class Task:
         self.function = function
         self.name = function.__name__
         self.key = key
+        self.store = store
+        self.MagnivStore = None
         if key is None:
             self.key = self.name
         elif not self._is_valid_key(key):
             raise ValueError(
                 f"{key} is not a valid key, the key can only contain alphanumeric characters, -, _, . and space."
             )
+        if self.store:
+            self.MagnivStore = MagnivStore()
 
         update_wrapper(self, function)
 
-    def __call__(self, *args, **kwds) -> Callable:
-        return self.function(*args, **kwds)
+    def __call__(self, *args, **kwargs):
+        if not self.store:
+            return self.function(*args, **kwargs)
+        g = self.function.__globals__
+        sentinel = object()
+        oldvalue = g.get("var", sentinel)
+        g["MagnivStore"] = self.MagnivStore
+        try:
+            res = self.function(*args, **kwargs)
+        finally:
+            if oldvalue is sentinel:
+                del g["MagnivStore"]
+            else:
+                g["MagnivStore"] = oldvalue
+        return res, {self.key: self.MagnivStore.artifacts}
 
     def _is_valid_schedule(self, schedule) -> bool:
         """
@@ -60,7 +81,9 @@ class Task:
         return bool(re.match(Task.KEY_PATTERN, key))
 
 
-def task(_func=None, *, schedule=None, description=None, key=None) -> Callable:
+def task(
+    _func=None, *, schedule=None, description=None, key=None, store: bool = False
+) -> Callable:
     """
     If they pass in a function, then we raise an error. If they dont pass in a function, then we return
     a wrapper function that takes a function as an argument
@@ -77,6 +100,6 @@ def task(_func=None, *, schedule=None, description=None, key=None) -> Callable:
         raise ValueError("You must use arguments with magniv, it can not be called alone")
 
     def wrapper(function):
-        return Task(function, schedule=schedule, description=description, key=key)
+        return Task(function, schedule=schedule, description=description, key=key, store=store)
 
     return wrapper
