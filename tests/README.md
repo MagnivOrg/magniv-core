@@ -44,5 +44,5 @@ build.py:
             - saves dump.json to expected path
             - throws oserror if no file with decorated task is found
             - throws oserror if dir specified dir not found
-	    - multiple tasks within one file 
+	    - multiple tasks within one file
 ```
