@@ -75,7 +75,13 @@ def get_magniv_tasks(
             "description": None,
         }
         for decorator in node.decorator_list:
-            if not isinstance(decorator, ast.Name) and decorator.func.id == "task":
+            print("decorator ", decorator)
+            if (
+                not isinstance(decorator, ast.Name)
+                and hasattr(decorator, "func")
+                and hasattr(decorator.func, "id")
+                and decorator.func.id == "task"
+            ):
                 decorator_values = {kw.arg: kw.value.value for kw in decorator.keywords}
                 info = {**core_values, **decorator_values}
                 if missing_reqs := list({"schedule"} - set(info)):
