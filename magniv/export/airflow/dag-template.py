@@ -55,7 +55,7 @@ dag = DAG(
 )
 
 # check if the redis environment variable is set
-if "redis_url" in os.environ:
+if "REDIS_URL" in os.environ:
     with dag:
         t1 = KubernetesPodOperator(
             task_id="kubernetes_pod",

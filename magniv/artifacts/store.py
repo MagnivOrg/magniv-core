@@ -26,7 +26,7 @@ class MagnivStore:
         self.catalog = []
         try:
             self.r = (
-                redis.from_url(os.environ.get("redis_url"))
+                redis.from_url(os.environ.get("REDIS_URL"))
                 if "redis_url" in os.environ
                 else redis.Redis(host=host, port=port, db=db)
             )
