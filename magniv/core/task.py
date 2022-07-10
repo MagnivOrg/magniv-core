@@ -1,3 +1,4 @@
+import json
 import re
 from functools import update_wrapper
 from typing import Callable
@@ -59,7 +60,7 @@ class Task:
                 del g["MagnivStore"]
             else:
                 g["MagnivStore"] = oldvalue
-        return res, {self.key: self.MagnivStore.artifacts}
+        return json.dumps({self.key: self.MagnivStore.artifacts})
 
     def _is_valid_schedule(self, schedule) -> bool:
         """

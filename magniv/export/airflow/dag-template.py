@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 import requests
@@ -53,7 +54,24 @@ dag = DAG(
     on_failure_callback=failuretoreplace,
 )
 
-with dag:
+# check if the redis environment variable is set
+if "redis_url" in os.environ:
+    with dag:
+        t1 = KubernetesPodOperator(
+            task_id="kubernetes_pod",
+            name="kubernetes_pod",
+            namespace="default",
+            image=imagetoreplace,
+            cmds=["magniv-cli", "run", "filetoreplace", "functiontoreplace", "/bin/sh", "-c"],
+            startup_timeout_seconds=startuptoreplace,
+            on_failure_callback=failuretoreplace,
+            on_success_callback=successtoreplace,
+            do_xcom_push=True,
+            arguments=[
+                "mkdir -p /airflow/xcom; echo '{\"success\": false}' | tee /airflow/xcom/return.json; exit 1"
+            ],
+        )
+else:
     t1 = KubernetesPodOperator(
         task_id="kubernetes_pod",
         name="kubernetes_pod",

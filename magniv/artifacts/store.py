@@ -1,6 +1,7 @@
 import inspect
 import os
 from datetime import datetime
+from typing import Optional
 
 import redis
 
@@ -11,7 +12,9 @@ class MagnivStore:
     retrieving data
     """
 
-    def __init__(self, port=6379, host="localhost", db=0):
+    def __init__(
+        self, port: Optional[int] = 6379, host: Optional[str] = "localhost", db: Optional[int] = 0
+    ):
         """
         The function creates a Redis object and assigns it to the variable r.
 
@@ -40,7 +43,6 @@ class MagnivStore:
         Args:
           key (str): the key of the artifact
         """
-        # function_name = inspect.stack()[2][3]
         redis_function_name = inspect.stack()[1][3]
         if all(key not in d for d in self.artifacts):
             key_dict = {"key": key, "metadata": []}
@@ -87,7 +89,7 @@ class MagnivStore:
         self.r.spop(key)
         self.add_artifact(key=key)
 
-    def sadd(self, key, value):
+    def sadd(self, key: str, value: str):
         """
         `sadd` is a function that adds a value to a set
 
@@ -98,7 +100,7 @@ class MagnivStore:
         self.r.sadd(key, value)
         self.add_artifact(key=key)
 
-    def srem(self, key, value):
+    def srem(self, key: str, value: str):
         """
         It removes a value from a set.
 
@@ -109,7 +111,7 @@ class MagnivStore:
         self.r.srem(key, value)
         self.add_artifact(key=key)
 
-    def sismember(self, key, value):
+    def sismember(self, key: str, value: str):
         """
         `sismember` checks if a value is a member of a set
 
@@ -120,9 +122,9 @@ class MagnivStore:
         self.r.sismember(key, value)
         self.add_artifact(key=key)
 
-    def scard(self, key):
+    def scard(self, key: str):
         """
-        'scard' returns the number of elements in the set stored at key
+        This function returns the number of elements in the set stored at key
 
         Args:
           key: The key of the set to get the cardinality of.
