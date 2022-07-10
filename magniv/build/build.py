@@ -75,7 +75,6 @@ def get_magniv_tasks(
             "description": None,
         }
         for decorator in node.decorator_list:
-            print("decorator ", decorator)
             if (
                 not isinstance(decorator, ast.Name)
                 and hasattr(decorator, "func")
