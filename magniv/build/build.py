@@ -29,19 +29,37 @@ def _get_owner(root):
 
 
 def _get_ast_alias(names: List, key: str):
+    """
+    It takes a list of names and a key, and returns the alias of the name in the list that matches the
+    key, or None if there is no match
+
+    Args:
+      names (List): List[ast.alias]
+      key (str): The name of the variable we're looking for.
+
+    Returns:
+      The alias of the name, or the name itself if no alias is present.
+    """
     matching_name = next((i for i in names if i.name == key), None)
     if not matching_name:
         return None
-    return matching_name.asname if matching_name.asname else matching_name.name
+    return matching_name.asname or matching_name.name
 
 
 def _get_decorator_name(func):
-    if isinstance(func, ast.Name):
-        if hasattr(func, "id"):
-            return func.id
-    if isinstance(func, ast.Attribute):
-        if hasattr(func, "value") and hasattr(func, "attr"):
-            return ".".join([_get_decorator_name(func.value), func.attr])
+    """
+    It takes a Python AST node representing a decorator and returns the name of the decorator
+
+    Args:
+      func: The function being decorated.
+
+    Returns:
+      The name of the decorator.
+    """
+    if isinstance(func, ast.Name) and hasattr(func, "id"):
+        return func.id
+    if isinstance(func, ast.Attribute) and hasattr(func, "value") and hasattr(func, "attr"):
+        return ".".join([_get_decorator_name(func.value), func.attr])
     return ""
 
 
@@ -61,39 +79,43 @@ def get_decorated_nodes(parsed_ast: ast.AST) -> List:
     decorated_nodes = []
     for node in ast.walk(parsed_ast):
         # Add decorated functions
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and len(node.decorator_list) > 0:
+        if (
+            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and len(node.decorator_list) > 0
+        ):
             decorated_nodes.append(node)
             continue
 
         # Add possible decorator aliases
         if isinstance(node, ast.Import):
-            import_variants = [   
+            import_variants = [
                 # import magniv --- @magniv.core.task
-                {"import": "magniv", "decorator_suffix": ".core.task"}, 
+                {"import": "magniv", "decorator_suffix": ".core.task"},
                 # import magniv.core --- @magniv.core.task
-                {"import": "magniv.core", "decorator_suffix": ".task"}
+                {"import": "magniv.core", "decorator_suffix": ".task"},
             ]
             for variant in import_variants:
-                alias = _get_ast_alias(node.names, variant["import"])
-                if alias:
+                if alias := _get_ast_alias(node.names, variant["import"]):
                     decorator_aliases.append(alias + variant["decorator_suffix"])
         elif isinstance(node, ast.ImportFrom):
-            if node.module == 'magniv.core':
+            if node.module == "magniv.core":
                 # from magniv.core import task --- @task
-                alias = _get_ast_alias(node.names, "task")
-                if alias:
+                if alias := _get_ast_alias(node.names, "task"):
                     decorator_aliases.append(alias)
-            elif node.module == 'magniv':
+            elif node.module == "magniv":
                 # from magniv import core --- @core.task
-                alias = _get_ast_alias(node.names, "core")
-                if alias:
-                    decorator_aliases.append(alias + ".task")
-
+                if alias := _get_ast_alias(node.names, "core"):
+                    decorator_aliases.append(f"{alias}.task")
     return decorated_nodes, decorator_aliases
 
 
 def get_magniv_tasks(
-    filepath: str, decorated_nodes: List, decorator_aliases: List, root: str, req: str, used_keys: Dict
+    filepath: str,
+    decorated_nodes: List,
+    decorator_aliases: List,
+    root: str,
+    req: str,
+    used_keys: Dict,
 ) -> Tuple[List, Dict]:
     """
     It returns all Magniv decorated tasks from a list of python functions that are decorated

@@ -1,19 +1,7 @@
-import ast
-import os
-from typing import Union
-
 import pytest
 
+from magniv.build.build import get_decorated_nodes
 from tests.unit_tests.test_build import TestBuild
-
-from magniv.build.build import (
-    build,
-    get_decorated_nodes,
-    get_magniv_tasks,
-    get_task_files,
-    get_task_list,
-    save_tasks,
-)
 
 TEST_FILE = """from datetime import datetime
 
@@ -47,11 +35,34 @@ if __name__ == "__main__":
 class TestBuild(TestBuild):
     @pytest.fixture
     def file(self, tmpdir):
+        """
+        It creates a directory called tasks, creates a file called main.py in that directory, and writes
+        the contents of the TEST_FILE variable to that file. It then creates a file called
+        requirements.txt in the tasks directory and writes the word magniv to it. Finally, it returns
+        the path to the tasks directory
+
+        Args:
+          tmpdir: This is a pytest fixture that creates a temporary directory for us to use.
+
+        Returns:
+          The path to the directory where the file is located.
+        """
         tmpdir.mkdir("tasks").join("main.py").write(TEST_FILE)
         tmpdir.join("tasks/requirements.txt").write("magniv")
         return str(tmpdir.join("tasks"))
 
     def _extracted_from_test_get_decorated_nodes(self, decorated_nodes, arg1, arg2, arg3, arg4):
+        """
+        A function that checks if the name of the node is the same as the name of the function, and if
+        the decorator list has the same keywords as the function.
+
+        Args:
+          decorated_nodes: the list of nodes that have been decorated
+          arg1: The index of the decorated node in the list of decorated nodes.
+          arg2: the name of the function
+          arg3: the schedule
+          arg4: the name of the function
+        """
         assert decorated_nodes[arg1].name == arg2
         assert decorated_nodes[arg1].decorator_list[0].keywords[0].arg == "schedule"
         assert decorated_nodes[arg1].decorator_list[0].keywords[0].value.s == arg3
