@@ -56,7 +56,7 @@ def _get_decorator_name(func):
     Returns:
       The name of the decorator.
     """
-    if isinstance(func, ast.Name) and hasattr(func, "id"):
+    if hasattr(func, "id"):
         return func.id
     if isinstance(func, ast.Attribute) and hasattr(func, "value") and hasattr(func, "attr"):
         return ".".join([_get_decorator_name(func.value), func.attr])
