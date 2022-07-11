@@ -214,7 +214,10 @@ def get_task_list(
         used_keys = {}
     for fileinfo in task_files:
         with open(fileinfo["filepath"]) as f:
-            parsed_ast = ast.parse(f.read())
+            try:
+                parsed_ast = ast.parse(f.read())
+            except UnicodeDecodeError as e:
+                continue
             decorated_nodes, decorator_aliases = get_decorated_nodes(parsed_ast)
             tasks_list.extend(
                 get_magniv_tasks(
