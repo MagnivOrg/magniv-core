@@ -28,29 +28,94 @@ def _get_owner(root):
     return "local"
 
 
+def _get_ast_alias(names: List, key: str):
+    """
+    It takes a list of names and a key, and returns the alias of the name in the list that matches the
+    key, or None if there is no match
+
+    Args:
+      names (List): List[ast.alias]
+      key (str): The name of the variable we're looking for.
+
+    Returns:
+      The alias of the name, or the name itself if no alias is present.
+    """
+    matching_name = next((i for i in names if i.name == key), None)
+    if not matching_name:
+        return None
+    return matching_name.asname or matching_name.name
+
+
+def _get_decorator_name(func):
+    """
+    It takes a Python AST node representing a decorator and returns the name of the decorator
+
+    Args:
+      func: The function being decorated.
+
+    Returns:
+      The name of the decorator.
+    """
+    if hasattr(func, "id"):
+        return func.id
+    if isinstance(func, ast.Attribute) and hasattr(func, "value") and hasattr(func, "attr"):
+        return ".".join([_get_decorator_name(func.value), func.attr])
+    return ""
+
+
 def get_decorated_nodes(parsed_ast: ast.AST) -> List:
     """
-    It returns a list of all function and async function definitions in the AST that have at least one
-    decorator
+    It returns decorator nodes and decorator aliases.
 
     Args:
       parsed_ast (ast.AST): The parsed AST of the file.
 
     Returns:
       A list of nodes that are either a FunctionDef or AsyncFunctionDef and have a decorator_list.
+      A list of aliases that can be used for Magniv task decorators.
     """
-    return [
-        node
-        for node in ast.walk(parsed_ast)
+
+    decorator_aliases = []
+    decorated_nodes = []
+    for node in ast.walk(parsed_ast):
+        # Add decorated functions
         if (
             isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
             and len(node.decorator_list) > 0
-        )
-    ]
+        ):
+            decorated_nodes.append(node)
+            continue
+
+        # Add possible decorator aliases
+        if isinstance(node, ast.Import):
+            import_variants = [
+                # import magniv --- @magniv.core.task
+                {"import": "magniv", "decorator_suffix": ".core.task"},
+                # import magniv.core --- @magniv.core.task
+                {"import": "magniv.core", "decorator_suffix": ".task"},
+            ]
+            for variant in import_variants:
+                if alias := _get_ast_alias(node.names, variant["import"]):
+                    decorator_aliases.append(alias + variant["decorator_suffix"])
+        elif isinstance(node, ast.ImportFrom):
+            if node.module == "magniv.core":
+                # from magniv.core import task --- @task
+                if alias := _get_ast_alias(node.names, "task"):
+                    decorator_aliases.append(alias)
+            elif node.module == "magniv":
+                # from magniv import core --- @core.task
+                if alias := _get_ast_alias(node.names, "core"):
+                    decorator_aliases.append(f"{alias}.task")
+    return decorated_nodes, decorator_aliases
 
 
 def get_magniv_tasks(
-    filepath: str, decorated_nodes: List, root: str, req: str, used_keys: Dict
+    filepath: str,
+    decorated_nodes: List,
+    decorator_aliases: List,
+    root: str,
+    req: str,
+    used_keys: Dict,
 ) -> Tuple[List, Dict]:
     """
     It returns all Magniv decorated tasks from a list of python functions that are decorated
@@ -75,12 +140,11 @@ def get_magniv_tasks(
             "description": None,
         }
         for decorator in node.decorator_list:
-            if (
-                not isinstance(decorator, ast.Name)
-                and hasattr(decorator, "func")
-                and hasattr(decorator.func, "id")
-                and decorator.func.id == "task"
-            ):
+            if hasattr(decorator, "func"):
+                decorator_name = _get_decorator_name(decorator.func)
+                if decorator_name not in decorator_aliases:
+                    continue
+
                 decorator_values = {kw.arg: kw.value.value for kw in decorator.keywords}
                 info = {**core_values, **decorator_values}
                 if missing_reqs := list({"schedule"} - set(info)):
@@ -95,6 +159,7 @@ def get_magniv_tasks(
                     )
                 used_keys[info["key"]] = filepath
                 tasks.append(info)
+
     return tasks
 
 
@@ -149,12 +214,16 @@ def get_task_list(
         used_keys = {}
     for fileinfo in task_files:
         with open(fileinfo["filepath"]) as f:
-            parsed_ast = ast.parse(f.read())
-            decorated_nodes = get_decorated_nodes(parsed_ast)
+            try:
+                parsed_ast = ast.parse(f.read())
+            except UnicodeDecodeError as e:
+                continue
+            decorated_nodes, decorator_aliases = get_decorated_nodes(parsed_ast)
             tasks_list.extend(
                 get_magniv_tasks(
                     fileinfo["filepath"],
                     decorated_nodes,
+                    decorator_aliases,
                     root=task_folder,
                     req=fileinfo["req"],
                     used_keys=used_keys,

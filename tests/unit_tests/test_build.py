@@ -64,7 +64,7 @@ class TestBuild:
         `get_decorated_nodes` returns a list of all the decorated functions in a Python file
         """
         parsed_ast, filepath = self.get_ast(file)
-        decorated_nodes = get_decorated_nodes(parsed_ast)
+        decorated_nodes, _ = get_decorated_nodes(parsed_ast)
         self._extracted_from_test_get_decorated_nodes(
             decorated_nodes, 0, "hello_world", "@hourly", "goodbye_world_1"
         )
@@ -78,11 +78,12 @@ class TestBuild:
         dictionaries containing the information about each task
         """
         parsed_ast, filepath = self.get_ast(file)
-        decorated_nodes = get_decorated_nodes(parsed_ast)
+        decorated_nodes, decorator_aliases = get_decorated_nodes(parsed_ast)
         used_keys = {}
         tasks = get_magniv_tasks(
             filepath,
             decorated_nodes,
+            decorator_aliases,
             root="tests/unit_tests",
             req="requirements.txt",
             used_keys=used_keys,
