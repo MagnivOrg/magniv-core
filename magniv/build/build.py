@@ -48,7 +48,7 @@ def _get_ast_alias(names: List, key: str):
 
 def _get_decorator_name(func):
     """
-    It takes a Python AST node representing a decorator and returns the name of the decorator
+    It takes a Python AST node and recursively returns the decorator name.
 
     Args:
       func: The function being decorated.
@@ -56,7 +56,7 @@ def _get_decorator_name(func):
     Returns:
       The name of the decorator.
     """
-    if hasattr(func, "id"):
+    if isinstance(func, ast.Name) and hasattr(func, "id"):
         return func.id
     if isinstance(func, ast.Attribute) and hasattr(func, "value") and hasattr(func, "attr"):
         return ".".join([_get_decorator_name(func.value), func.attr])
