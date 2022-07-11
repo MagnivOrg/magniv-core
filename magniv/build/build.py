@@ -29,6 +29,17 @@ def _get_owner(root):
 
 
 def _get_ast_alias(names: List, key: str):
+    """
+    It takes a list of names and a key, and returns the alias of the name in the list that matches the
+    key, or None if there is no match
+
+    Args:
+      names (List): List[ast.alias]
+      key (str): The name of the variable we're looking for.
+
+    Returns:
+      The alias of the name, or the name itself if no alias is present.
+    """
     matching_name = next((i for i in names if i.name == key), None)
     if not matching_name:
         return None
@@ -36,6 +47,15 @@ def _get_ast_alias(names: List, key: str):
 
 
 def _get_decorator_name(func):
+    """
+    It takes a Python AST node representing a decorator and returns the name of the decorator
+
+    Args:
+      func: The function being decorated.
+
+    Returns:
+      The name of the decorator.
+    """
     if isinstance(func, ast.Name) and hasattr(func, "id"):
         return func.id
     if isinstance(func, ast.Attribute) and hasattr(func, "value") and hasattr(func, "attr"):
