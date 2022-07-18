@@ -1,11 +1,5 @@
 from setuptools import find_packages, setup
 
-try:
-    with open("proj_description.md", encoding="utf-8") as fh:
-        long_description = fh.read()
-except:
-    long_description = ""
-
 setup(
     name="magniv",
     description="Magniv Core Library",
@@ -14,8 +8,6 @@ setup(
     project_urls={
         "Documentation": "https://docs.magniv.io",
     },
-    long_description=long_description,
-    long_description_content_type="text/markdown",
     version="0.1.42",
     py_modules=["magniv"],
     packages=find_packages(),
