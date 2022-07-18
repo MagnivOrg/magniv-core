@@ -1,6 +1,4 @@
-import inspect
 import os
-from datetime import datetime
 from typing import Optional
 
 import redis
@@ -8,7 +6,7 @@ import redis
 
 class MagnivStore:
     """
-    It's a wrapper around a Redis connection that provides a few convenience methods for storing and
+    A wrapper around a Redis connection that provides a few convenience methods for storing and
     retrieving data
     """
 
@@ -22,61 +20,46 @@ class MagnivStore:
         :param host: The hostname of the Redis server, defaults to localhost (optional)
         :param db: The database number to connect to, defaults to 0 (optional)
         """
-        self.artifacts = []
-        self.catalog = []
         try:
             self.r = (
                 redis.from_url(os.environ.get("REDIS_URL"))
-                if "redis_url" in os.environ
+                if "REDIS_URL" in os.environ
                 else redis.Redis(host=host, port=port, db=db)
             )
         except redis.exceptions.ConnectionError as e:
             print("Could not connect to Redis server")
             raise e
 
-    def add_artifact(self, key: str):
+    def set(self, key: str, value: str):
         """
-        The function takes in a key and adds it to the artifacts list. If the key is not in the list, it
-        creates a new dictionary with the key and metadata. If the key is in the list, it adds the
-        metadata to the dictionary
+        `set` is a function that sets a value to a key
 
         Args:
-          key (str): the key of the artifact
+          key (str): The key to assign the value to.
+          value (str): The value to assign to the key.
         """
-        redis_function_name = inspect.stack()[1][3]
-        if all(key not in d for d in self.artifacts):
-            key_dict = {"key": key, "metadata": []}
-        if len(self.artifacts) > 0:
-            if a_dict := [a_dict for a_dict in self.artifacts if a_dict["key"] == key]:
-                if redis_function_name not in [
-                    b_dict["redis_action"] for b_dict in a_dict[0]["metadata"]
-                ]:
-                    a_dict[0]["metadata"].append(
-                        {
-                            "redis_action": redis_function_name,
-                            "count": 1,
-                            "timestamps": [datetime.now()],
-                        }
-                    )
-                else:
-                    for b_dict in a_dict[0]["metadata"]:
-                        if b_dict["redis_action"] == redis_function_name:
-                            b_dict["count"] += 1
-                            b_dict["timestamps"].append(datetime.now())
-            else:
-                key_dict["metadata"].append(
-                    {
-                        "redis_action": redis_function_name,
-                        "count": 1,
-                        "timestamps": [datetime.now()],
-                    }
-                )
-                self.artifacts.append(key_dict)
-        else:
-            key_dict["metadata"].append(
-                {"redis_action": redis_function_name, "count": 1, "timestamps": [datetime.now()]}
-            )
-            self.artifacts.append(key_dict)
+        return self.r.set(key, value)
+
+    def get(self, key: str):
+        """
+        `get` is a function that gets a value from a key
+
+        Args:
+          key (str): The key to get the value from.
+        """
+        value = self.r.get(key)
+        if value is not None:
+            value = value.decode()
+        return value
+
+    def delete(self, key: str):
+        """
+        `delete` is a function that deletes the value for a key
+
+        Args:
+            key (str): The key to delete the value from.
+        """
+        return self.r.delete(key)
 
     def spop(self, key: str):
         """
@@ -84,10 +67,11 @@ class MagnivStore:
 
         Args:
           key (str): The key of the set to remove a random element from.
-          description (Optional[str]): Optional[str]
         """
-        self.r.spop(key)
-        self.add_artifact(key=key)
+        value = self.r.spop(key)
+        if value is not None:
+            value = value.decode()
+        return value
 
     def sadd(self, key: str, value: str):
         """
@@ -97,37 +81,45 @@ class MagnivStore:
           key: The key to store the value in
           value: The value to be added to the set.
         """
-        self.r.sadd(key, value)
-        self.add_artifact(key=key)
+        return self.r.sadd(key, value)
 
     def srem(self, key: str, value: str):
         """
-        It removes a value from a set.
+        `srem` is a function that removes a value from a set.
 
         Args:
           key: The key of the set to remove the value from
-          value: The value to be added to the set.
+          value: The value to be removed from the set.
         """
-        self.r.srem(key, value)
-        self.add_artifact(key=key)
+        return self.r.srem(key, value)
 
     def sismember(self, key: str, value: str):
         """
-        `sismember` checks if a value is a member of a set
+        `sismember` is a function that checks if a value is a member of a set
 
         Args:
           key: The key of the set
-          value: The value to be added to the set.
+          value: The value to check if it is a member of the set.
         """
-        self.r.sismember(key, value)
-        self.add_artifact(key=key)
+        return self.r.sismember(key, value)
 
     def scard(self, key: str):
         """
-        This function returns the number of elements in the set stored at key
+        `scard` is a function that returns the number of elements in the set stored at key
 
         Args:
           key: The key of the set to get the cardinality of.
         """
-        self.r.scard(key)
-        self.add_artifact(key=key)
+        return self.r.scard(key)
+
+    def smembers(self, key: str):
+        """
+        `smembers` is a function that returns the members of a set
+
+        Args:
+         key: The key of the set to retrieve members of.
+        """
+        values = self.r.smembers(key)
+        if values is not None:
+            values = {v.decode() for v in values}
+        return values
