@@ -49,8 +49,6 @@ dag = DAG(
     schedule_interval=scheduletoreplace,
     default_args=default_args,
     catchup=False,
-    on_success_callback=successtoreplace,
-    on_failure_callback=failuretoreplace,
 )
 
 with dag:
