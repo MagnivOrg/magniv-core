@@ -147,7 +147,12 @@ def get_magniv_tasks(
                 decorator_name = _get_decorator_name(decorator.func)
                 if decorator_name not in decorator_aliases:
                     continue
-                decorator_values = {kw.arg: kw.value.value for kw in decorator.keywords}
+                decorator_values = {}
+                for kw in decorator.keywords:
+                    try:
+                        decorator_values[kw.arg] = kw.value.value
+                    except AttributeError:
+                        decorator_values[kw.arg] = kw.value
                 info = {**core_values, **decorator_values}
                 missing_reqs = list({"schedule"} - set(info))
                 if len(missing_reqs) > 0:
@@ -218,7 +223,7 @@ def get_task_list(
     for fileinfo in task_files:
         with open(fileinfo["filepath"]) as f:
             try:
-                parsed_ast = ast.parse(f.read(), feature_version=(3, 7))
+                parsed_ast = ast.parse(f.read())
             except UnicodeDecodeError as e:
                 continue
             decorated_nodes, decorator_aliases = get_decorated_nodes(parsed_ast)
