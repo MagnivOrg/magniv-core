@@ -12,7 +12,8 @@ def _save_to_json(obj, filepath):
         try:
             json.dump(obj, fo)
         except TypeError as e:
-            json.dumps(obj.decode("utf-8"), fo)
+            obj = [x.decode("utf-8") for x in obj]
+            json.dumps(obj, fo)
 
 
 def _get_tasks_json(filepath):
