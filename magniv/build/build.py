@@ -95,16 +95,19 @@ def get_decorated_nodes(parsed_ast: ast.AST) -> List:
                 {"import": "magniv.core", "decorator_suffix": ".task"},
             ]
             for variant in import_variants:
-                if alias := _get_ast_alias(node.names, variant["import"]):
+                alias = _get_ast_alias(node.names, variant["import"])
+                if alias:
                     decorator_aliases.append(alias + variant["decorator_suffix"])
         elif isinstance(node, ast.ImportFrom):
             if node.module == "magniv.core":
                 # from magniv.core import task --- @task
-                if alias := _get_ast_alias(node.names, "task"):
+                alias = _get_ast_alias(node.names, "task")
+                if alias:
                     decorator_aliases.append(alias)
             elif node.module == "magniv":
                 # from magniv import core --- @core.task
-                if alias := _get_ast_alias(node.names, "core"):
+                alias = _get_ast_alias(node.names, "core")
+                if alias:
                     decorator_aliases.append(f"{alias}.task")
     return decorated_nodes, decorator_aliases
 
@@ -147,7 +150,8 @@ def get_magniv_tasks(
 
                 decorator_values = {kw.arg: kw.value.value for kw in decorator.keywords}
                 info = {**core_values, **decorator_values}
-                if missing_reqs := list({"schedule"} - set(info)):
+                missing_reqs = list({"schedule"} - set(info))
+                if len(missing_reqs) > 0:
                     raise ValueError(
                         "Task missing required variables, please resolve by defining ("
                         + ",".join([f" {x} " for x in missing_reqs])
