@@ -147,8 +147,9 @@ def get_magniv_tasks(
                 decorator_name = _get_decorator_name(decorator.func)
                 if decorator_name not in decorator_aliases:
                     continue
-
-                decorator_values = {kw.arg: kw.value.value for kw in decorator.keywords}
+                decorator_values = {}
+                for kw in decorator.keywords:
+                    decorator_values[kw.arg] = kw.value.value
                 info = {**core_values, **decorator_values}
                 missing_reqs = list({"schedule"} - set(info))
                 if len(missing_reqs) > 0:
