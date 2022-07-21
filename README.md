@@ -43,7 +43,7 @@ def hello_world():
 Scheduling is not a new problem. Magniv is designed with data scientists and hackers in mind. No more DAG files and bash scripts. Observability and logging comes out of the box.
 
 <div align="center">
-  <img src=".github/assets/compare_table.png" max-height="250px">
+  <img src=".github/assets/compare_table.png" max-height="180px">
 </div>
 
 ## Monitoring
