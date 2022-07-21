@@ -38,6 +38,14 @@ def hello_world():
     print("Hello world")
 ```
 
+## Why Magniv?
+
+Scheduling is not a new problem. Magniv is designed with data scientists and hackers in mind. No more DAG files and bash scripts. Observability and logging comes out of the box.
+
+<div align="center">
+  <img src=".github/assets/compare_table.png" max-height="250px">
+</div>
+
 ## Monitoring
 
 Using the Magniv dashboard makes it easy to monitor running jobs. Each Magniv task is displayed with its previous run information, logs, code snippets, and other details. Users also have the ability to disable tasks and manually trigger new runs.
