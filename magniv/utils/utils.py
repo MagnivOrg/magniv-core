@@ -9,11 +9,7 @@ def _save_to_json(obj, filepath):
     :param filepath: The path to the file to save the data to
     """
     with open(filepath, "w") as fo:
-        try:
-            json.dump(obj, fo)
-        except TypeError as e:
-            obj = [x.decode("utf-8") for x in obj]
-            json.dumps(obj, fo)
+        json.dump(obj, fo)
 
 
 def _get_tasks_json(filepath):
