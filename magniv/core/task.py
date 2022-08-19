@@ -2,6 +2,8 @@ import re
 from functools import update_wrapper
 from typing import Callable
 
+from croniter import CroniterBadCronError, CroniterBadDateError, CroniterNotAlphaError, croniter
+
 
 class Task:
     """
@@ -15,7 +17,6 @@ class Task:
     :param key: the unique key that will reference the function, default is the function of the name
     """
 
-    CRON_PATTERN = r"(^((\*\/)?([1-5]?[0-9])((\,|\-|\/)\d+)*|\*)\s((\*\/)?((2[0-3]|1[0-9]|[0-9]))((\,|\-|\/)\d+)*|\*)\s((\*\/)?([1-9]|[12][0-9]|3[01])((\,|\-|\/)\d+)*|\*)\s((\*\/)?([1-9]|1[0-2])((\,|\-|\/)\d+)*|\*)\s((\*\/)?[0-6]((\,|\-|\/)\d+)*|\*)$)|@(annually|yearly|monthly|weekly|daily|hourly|reboot)"
     KEY_PATTERN = r"^[\w\-.]+$"
 
     def __init__(self, function, schedule=None, description=None, key=None) -> None:
@@ -43,10 +44,20 @@ class Task:
     def _is_valid_schedule(self, schedule) -> bool:
         """
         It returns `True` if the given `schedule` is a valid cron expression, and `False` otherwise
+        Based on whatever Airflow accepts as a valid cron expression
 
         :param schedule: The cron schedule for the task
         :return: A boolean value.
         """
+        try:
+            croniter(schedule)
+            return True
+        except (
+            CroniterBadCronError,
+            CroniterBadDateError,
+            CroniterNotAlphaError,
+        ) as cron_e:
+            return False
         return bool(re.match(Task.CRON_PATTERN, schedule))
 
     def _is_valid_key(self, key) -> bool:
