@@ -19,12 +19,13 @@ class Task:
 
     KEY_PATTERN = r"^[\w\-.]+$"
 
-    def __init__(self, function, schedule=None, description=None, key=None) -> None:
+    def __init__(self, function, schedule=None, resources=None, description=None, key=None) -> None:
         if schedule is None:
             raise ValueError("schedule must be provided")
         if not self._is_valid_schedule(schedule):
             raise ValueError(f"{schedule} is not a valid cron schedule")
         self.schedule = schedule
+        self.resources = resources
         self.description = description
         self.function = function
         self.name = function.__name__
@@ -79,7 +80,7 @@ class Task:
         return bool(re.match(Task.KEY_PATTERN, key))
 
 
-def task(_func=None, *, schedule=None, description=None, key=None) -> Callable:
+def task(_func=None, *, schedule=None, resources=None, description=None, key=None) -> Callable:
     """
     If they pass in a function, then we raise an error. If they dont pass in a function, then we return
     a wrapper function that takes a function as an argument
@@ -87,6 +88,7 @@ def task(_func=None, *, schedule=None, description=None, key=None) -> Callable:
     :param _func: This is the function that is being wrapped
     :param schedule: This is the schedule that the task will run on. It can be a cron string, or a
     datetime.timedelta object
+    FIXME: add resources
     :param description: A description of the task
     :param key: This is the name of the task key. It is used to identify the task in the database
     :return: A function that takes in a function and returns a task instance.
@@ -96,6 +98,6 @@ def task(_func=None, *, schedule=None, description=None, key=None) -> Callable:
         raise ValueError("You must use arguments with magniv, it can not be called alone")
 
     def wrapper(function):
-        return Task(function, schedule=schedule, description=description, key=key)
+        return Task(function, schedule=schedule, resources=resources, description=description, key=key)
 
     return wrapper
