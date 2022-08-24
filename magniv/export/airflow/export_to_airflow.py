@@ -65,7 +65,12 @@ def export_to_airflow(
                     .replace("imagetoreplace", f"'{docker_name}'")
                     .replace("filetoreplace", task_info["location"])
                     .replace("functiontoreplace", task_info["name"])
-                    .replace("resourcesdicttoreplace", task_info["resources"])
+                    .replace(
+                        "resourcesdicttoreplace",
+                        task_info["resources"]
+                        if "resources" in task_info.keys()
+                        else "None",
+                    )
                     .replace(
                         "callbackhooktoreplace",
                         f"'{callback_hook}'" if callback_hook is not None else "None",
