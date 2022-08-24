@@ -1,6 +1,6 @@
 import re
 from functools import update_wrapper
-from typing import Callable
+from typing import Callable, Dict
 
 from croniter import CroniterBadCronError, CroniterBadDateError, CroniterNotAlphaError, croniter
 
@@ -79,6 +79,12 @@ class Task:
         :return: A boolean value.
         """
         return bool(re.match(Task.KEY_PATTERN, key))
+    
+    def _is_valid_resources(self, resources) -> Dict[str, str]:
+        """
+        TODO: add functionality to sanitize inputs for resource requests
+        """
+        return resources
 
 
 def task(_func=None, *, schedule=None, resources=None, description=None, key=None) -> Callable:

@@ -66,7 +66,7 @@ def export_to_airflow(
                     .replace("functiontoreplace", task_info["name"])
                     .replace(
                         "resourcesdicttoreplace",
-                        task_info["resources"]
+                        str(task_info["resources"])
                         if "resources" in task_info.keys()
                         else "None",
                     )
