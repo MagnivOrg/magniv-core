@@ -23,7 +23,6 @@ def export_to_airflow(
 
     :param task_list: a list of dictionaries, each dictionary containing the following keys:
     :param gcp: If you want to use Google Cloud Platform, set this to True, defaults to False (optional)
-    FIXME: add resources
     :param gcp_project_id: The project id of your GCP project
     :param gcp_dag_folder: The folder where the dag files will be stored
     :param callback_hook: This is the URL of the callback function that will be called when the task is

@@ -13,6 +13,7 @@ class Task:
 
     :param function: the function that is being decorated
     :param schedule: the cron schedule that this function will be scheduled with
+    :param resources: the resource requirements for this function
     :param description: description of the function, to be used for the auto generated documentation
     :param key: the unique key that will reference the function, default is the function of the name
     """
@@ -88,7 +89,7 @@ def task(_func=None, *, schedule=None, resources=None, description=None, key=Non
     :param _func: This is the function that is being wrapped
     :param schedule: This is the schedule that the task will run on. It can be a cron string, or a
     datetime.timedelta object
-    FIXME: add resources
+    :param resources: A dictionary describing the resource requirements for this task
     :param description: A description of the task
     :param key: This is the name of the task key. It is used to identify the task in the database
     :return: A function that takes in a function and returns a task instance.
