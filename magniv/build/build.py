@@ -152,8 +152,8 @@ def get_magniv_tasks(
                     if isinstance(kw.value, ast.Dict):
                         constructed_decorator_values[kw.arg] = dict(
                             zip(
-                                [a.value for a in kw.value.keys],
-                                [a.value for a in kw.value.values],
+                                [key.value for key in kw.value.keys],
+                                [val.value for val in kw.value.values],
                             )
                         )
                     else:
