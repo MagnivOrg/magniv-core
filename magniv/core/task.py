@@ -21,7 +21,7 @@ class Task:
 
     def __init__(self, function, schedule=None, description=None, key=None) -> None:
         if schedule is None:
-            raise ValueError("Schedule must be provided")
+            raise ValueError("schedule must be provided")
         if not self._is_valid_schedule(schedule):
             raise ValueError(f"{schedule} is not a valid cron schedule")
         self.schedule = schedule
@@ -37,6 +37,14 @@ class Task:
             )
 
         update_wrapper(self, function)
+
+    def as_dict(self) -> dict:
+        return {
+            "schedule": self.schedule,
+            "description": self.description,
+            "name": self.name,
+            "key": self.key,
+        }
 
     def __call__(self, *args, **kwds) -> Callable:
         return self.function(*args, **kwds)
