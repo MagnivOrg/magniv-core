@@ -5,6 +5,7 @@ import platform
 import sys
 from typing import Dict, List, NoReturn, Tuple
 
+from magniv.core import Task
 from magniv.utils.utils import _save_to_json
 
 
@@ -58,7 +59,11 @@ def _get_decorator_name(func):
     """
     if isinstance(func, ast.Name) and hasattr(func, "id"):
         return func.id
-    if isinstance(func, ast.Attribute) and hasattr(func, "value") and hasattr(func, "attr"):
+    if (
+        isinstance(func, ast.Attribute)
+        and hasattr(func, "value")
+        and hasattr(func, "attr")
+    ):
         return ".".join([_get_decorator_name(func.value), func.attr])
     return ""
 
@@ -131,12 +136,10 @@ def get_magniv_tasks(
     for node in decorated_nodes:
         core_values = {
             "location": filepath,
-            "name": node.name,
             "python_version": _get_python_version(root),
             "owner": _get_owner(root),
             "requirements_location": req,
             "line_number": node.lineno,
-            "key": node.name,
             "description": None,
         }
         for decorator in node.decorator_list:
@@ -145,7 +148,20 @@ def get_magniv_tasks(
                 if decorator_name not in decorator_aliases:
                     continue
 
-                decorator_values = {kw.arg: kw.value.value for kw in decorator.keywords}
+                constructed_decorator_values = {
+                    kw.arg: kw.value.value for kw in decorator.keywords
+                }
+                # Verify that the arugments are correct
+                try:
+                    dummy_function = lambda x: None
+                    dummy_function.__name__ = node.name
+                    task = Task(dummy_function, **constructed_decorator_values)
+                    decorator_values = task.as_dict()
+                except Exception as e:
+                    raise Exception(
+                        f"Building the task {node.name} in {core_values['location']} on line {core_values['line_number']} raised the following {type(e).__name__}: {e}"
+                    )
+
                 info = {**core_values, **decorator_values}
                 if missing_reqs := list({"schedule"} - set(info)):
                     raise ValueError(
@@ -180,7 +196,9 @@ def get_task_files(task_folder: str) -> List:
     task_files = []
     for root, dirs, files in os.walk(task_folder):
         req = (
-            f"{root}/requirements.txt" if os.path.exists(f"{root}/requirements.txt") else root_req
+            f"{root}/requirements.txt"
+            if os.path.exists(f"{root}/requirements.txt")
+            else root_req
         )
         if req is None:
             raise OSError(
@@ -269,7 +287,9 @@ def build(task_folder: str = None):
     else:
         save_dir = True
     if not os.path.exists(task_folder):
-        raise OSError("You must have a tasks folder that contains all of your tasks files")
+        raise OSError(
+            "You must have a tasks folder that contains all of your tasks files"
+        )
 
     # Hack to fix project imports by adding project directory to Python path
     sys.path.append(os.getcwd() + task_folder)
