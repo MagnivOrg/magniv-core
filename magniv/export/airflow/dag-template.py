@@ -58,6 +58,7 @@ with dag:
         namespace="default",
         image=imagetoreplace,
         cmds=["magniv-cli", "run", "filetoreplace", "functiontoreplace"],
+        resources=resourcesdicttoreplace,
         startup_timeout_seconds=startuptoreplace,
         on_failure_callback=failuretoreplace,
         on_success_callback=successtoreplace,
