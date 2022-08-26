@@ -15,11 +15,12 @@ class Task:
     :param schedule: the cron schedule that this function will be scheduled with
     :param description: description of the function, to be used for the auto generated documentation
     :param key: the unique key that will reference the function, default is the function of the name
+    :param triggered_by: list of upstream task keys that trigger this task on successful completion. Adding multiple tasks to this list will add multiple triggers.
     """
 
     KEY_PATTERN = r"^[\w\-.]+$"
 
-    def __init__(self, function, schedule=None, description=None, key=None) -> None:
+    def __init__(self, function, schedule=None, description=None, key=None, triggered_by=None) -> None:
         if schedule is None:
             raise ValueError("schedule must be provided")
         if not self._is_valid_schedule(schedule):
@@ -35,6 +36,7 @@ class Task:
             raise ValueError(
                 f"{key} is not a valid key, the key can only contain alphanumeric characters, -, _, . and space."
             )
+        self.triggered_by = triggered_by if triggered_by else []
 
         update_wrapper(self, function)
 
@@ -44,6 +46,7 @@ class Task:
             "description": self.description,
             "name": self.name,
             "key": self.key,
+            "triggered_by": self.triggered_by,
         }
 
     def __call__(self, *args, **kwds) -> Callable:
@@ -79,7 +82,7 @@ class Task:
         return bool(re.match(Task.KEY_PATTERN, key))
 
 
-def task(_func=None, *, schedule=None, description=None, key=None) -> Callable:
+def task(_func=None, *, schedule=None, description=None, key=None, triggered_by=None) -> Callable:
     """
     If they pass in a function, then we raise an error. If they dont pass in a function, then we return
     a wrapper function that takes a function as an argument
@@ -89,6 +92,8 @@ def task(_func=None, *, schedule=None, description=None, key=None) -> Callable:
     datetime.timedelta object
     :param description: A description of the task
     :param key: This is the name of the task key. It is used to identify the task in the database
+    :param triggered_by: This is a list of upstream task keys (usually @task decorated function names) that 
+    trigger this task on successful completion. Adding multiple tasks to this list will add multiple triggers.
     :return: A function that takes in a function and returns a task instance.
     """
     if _func is not None:  # this means they did not pass in any arguments like @magniv
@@ -96,6 +101,6 @@ def task(_func=None, *, schedule=None, description=None, key=None) -> Callable:
         raise ValueError("You must use arguments with magniv, it can not be called alone")
 
     def wrapper(function):
-        return Task(function, schedule=schedule, description=description, key=key)
+        return Task(function, schedule=schedule, description=description, key=key, triggered_by=None)
 
     return wrapper
