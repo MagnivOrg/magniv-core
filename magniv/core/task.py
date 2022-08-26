@@ -45,6 +45,7 @@ class Task:
     def as_dict(self) -> dict:
         return {
             "schedule": self.schedule,
+            "resources": self.resources,
             "description": self.description,
             "name": self.name,
             "key": self.key,
@@ -85,9 +86,21 @@ class Task:
 
     def _make_valid_resources(self, resources) -> Dict[str, str]:
         """
-        TODO: add functionality to sanitize inputs for resource requests
+        Takes in a resources dictionary with generic parameters and converts it to the appropriate syntax
+        for our infrastructure
+        #TODO: enforce reasonable limits for quantity of resources
+
+        :param key: The generic resources dict from the task decorator
+        :return: A dict with correct syntax
         """
-        return resources
+        clean_dict = {}
+
+        if "cpu" in resources.keys():
+            clean_dict["limit_cpu"] = resources["cpu"]
+        if "memory" in resources.keys():
+            clean_dict["limit_memory"] = resources["memory"]
+
+        return clean_dict
 
 
 def task(_func=None, *, schedule=None, resources=None, description=None, key=None, calls=None) -> Callable:
