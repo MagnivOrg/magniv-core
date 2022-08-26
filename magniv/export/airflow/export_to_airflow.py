@@ -65,6 +65,12 @@ def export_to_airflow(
                     .replace("filetoreplace", task_info["location"])
                     .replace("functiontoreplace", task_info["name"])
                     .replace(
+                        "resourcesdicttoreplace",
+                        str(task_info["resources"])
+                        if "resources" in task_info.keys()
+                        else "None",
+                    )
+                    .replace(
                         "callbackhooktoreplace",
                         f"'{callback_hook}'" if callback_hook is not None else "None",
                     )
