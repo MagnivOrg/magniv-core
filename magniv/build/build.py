@@ -147,6 +147,7 @@ def get_magniv_tasks(
                 decorator_name = _get_decorator_name(decorator.func)
                 if decorator_name not in decorator_aliases:
                     continue
+
                 constructed_decorator_values = {}
                 for kw in decorator.keywords:
                     if isinstance(kw.value, ast.Dict):
@@ -170,6 +171,7 @@ def get_magniv_tasks(
                     raise Exception(
                         f"Building the task {node.name} in {core_values['location']} on line {core_values['line_number']} raised the following {type(e).__name__}: {e}"
                     )
+
                 info = {**core_values, **decorator_values}
                 if missing_reqs := list({"schedule"} - set(info)):
                     raise ValueError(
