@@ -26,6 +26,13 @@ def hello_world():
 def hello_world_2():
     print(f"Hello world, the time is {datetime.now()}")
 
+@task(schedule="@daily", resources={"cpu": "500mi", "memory": "3Gi"})
+def resourceful_valid():
+    print("using custom resources!")
+
+@task(schedule="@daily", resources={"garbage": 222, "gpu": "over9000"})
+def resourceful_invalid():
+    print("using bad resources")
 
 def dummy_task():
     print("This is a dummy task")
@@ -43,7 +50,9 @@ class TestBuild:
         tmpdir.join("tasks/requirements.txt").write("magniv")
         return str(tmpdir.join("tasks"))
 
-    def _extracted_from_test_get_decorated_nodes(self, decorated_nodes, arg1, arg2, arg3, arg4):
+    def _extracted_from_test_get_decorated_nodes(
+        self, decorated_nodes, arg1, arg2, arg3, arg4
+    ):
         assert decorated_nodes[arg1].name == arg2
         assert decorated_nodes[arg1].decorator_list[0].func.id == "task"
         assert decorated_nodes[arg1].decorator_list[0].keywords[0].arg == "schedule"
@@ -156,9 +165,9 @@ class TestBuild:
         :param tmpdir: This is a pytest fixture that creates a temporary directory for us to use
         :return: The path to the requirements.txt file.
         """
-        tmpdir.mkdir("tasks").mkdir("subdir").mkdir("subsubdir").join("requirements.txt").write(
-            "magniv"
-        )
+        tmpdir.mkdir("tasks").mkdir("subdir").mkdir("subsubdir").join(
+            "requirements.txt"
+        ).write("magniv")
         return str(tmpdir.join("tasks/subdir/subsubdir"))
 
     def test_subdirreqs_filepath(self, subdir_reqs_file):
@@ -171,3 +180,18 @@ class TestBuild:
         json_pth = f"{subdir_reqs_file}/dump.json"
         save_tasks(task_folder=subdir_reqs_file, dump_save_pth=json_pth)
         assert os.path.exists(json_pth) == True
+
+    def test_task_builds_with_valid_custom_resources(self, file):
+        task_list = get_task_list([{"filepath": f"{file}/main.py", "req": None}])
+        for task in task_list:
+            if task["name"] == "resourceful_valid":
+                assert task["resources"] == {
+                    "limit_cpu": "500mi",
+                    "limit_memory": "3Gi",
+                }
+
+    def test_task_ignores_invalid_custom_resources(self, file):
+        task_list = get_task_list([{"filepath": f"{file}/main.py", "req": None}])
+        for task in task_list:
+            if task["name"] == "resourceful_invalid":
+                assert not task["resources"]
