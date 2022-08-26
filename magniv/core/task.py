@@ -95,6 +95,8 @@ class Task:
         """
         clean_dict = {}
 
+        if resources is None:
+            return resources
         if "cpu" in resources.keys():
             clean_dict["limit_cpu"] = resources["cpu"]
         if "memory" in resources.keys():
