@@ -148,9 +148,17 @@ def get_magniv_tasks(
                 if decorator_name not in decorator_aliases:
                     continue
 
-                constructed_decorator_values = {
-                    kw.arg: kw.value.value for kw in decorator.keywords
-                }
+                constructed_decorator_values = {}
+                for kw in decorator.keywords:
+                    if isinstance(kw.value, ast.Dict):
+                        constructed_decorator_values[kw.arg] = dict(
+                            zip(
+                                [key.value for key in kw.value.keys],
+                                [val.value for val in kw.value.values],
+                            )
+                        )
+                    else:
+                        constructed_decorator_values[kw.arg] = kw.value.value
                 # Verify that the arugments are correct
                 try:
                     dummy_function = lambda x: None
