@@ -8,10 +8,10 @@ setup(
     project_urls={
         "Documentation": "https://docs.magniv.io",
     },
-    version="0.1.47",
+    version="0.1.48",
     py_modules=["magniv"],
     packages=find_packages(),
-    install_requires=["Click", "docker", "python-dotenv", "requests"],
+    install_requires=["Click", "docker", "python-dotenv", "requests", "croniter"],
     entry_points={
         "console_scripts": [
             "magniv-cli = magniv.scripts.magniv:cli",
