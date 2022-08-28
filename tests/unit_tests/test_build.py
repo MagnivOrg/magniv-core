@@ -50,9 +50,7 @@ class TestBuild:
         tmpdir.join("tasks/requirements.txt").write("magniv")
         return str(tmpdir.join("tasks"))
 
-    def _extracted_from_test_get_decorated_nodes(
-        self, decorated_nodes, arg1, arg2, arg3, arg4
-    ):
+    def _extracted_from_test_get_decorated_nodes(self, decorated_nodes, arg1, arg2, arg3, arg4):
         assert decorated_nodes[arg1].name == arg2
         assert decorated_nodes[arg1].decorator_list[0].func.id == "task"
         assert decorated_nodes[arg1].decorator_list[0].keywords[0].arg == "schedule"
@@ -165,9 +163,9 @@ class TestBuild:
         :param tmpdir: This is a pytest fixture that creates a temporary directory for us to use
         :return: The path to the requirements.txt file.
         """
-        tmpdir.mkdir("tasks").mkdir("subdir").mkdir("subsubdir").join(
-            "requirements.txt"
-        ).write("magniv")
+        tmpdir.mkdir("tasks").mkdir("subdir").mkdir("subsubdir").join("requirements.txt").write(
+            "magniv"
+        )
         return str(tmpdir.join("tasks/subdir/subsubdir"))
 
     def test_subdirreqs_filepath(self, subdir_reqs_file):
