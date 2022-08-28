@@ -150,14 +150,14 @@ def get_magniv_tasks(
 
                 constructed_decorator_values = {}
                 for kw in decorator.keywords:
-                    if isinstance(kw.value, ast.Dict) and kw.arg == "resources":
+                    if isinstance(kw.value, ast.Dict):
                         constructed_decorator_values[kw.arg] = dict(
                             zip(
                                 [key.value for key in kw.value.keys],
                                 [val.value for val in kw.value.values],
                             )
                         )
-                    if isinstance(kw.value, ast.List) and kw.arg == "triggered_by":
+                    if isinstance(kw.value, ast.List):
                         constructed_decorator_values[kw.arg] = [i.value for i in kw.value.elts]
                     else:
                         constructed_decorator_values[kw.arg] = kw.value.value
