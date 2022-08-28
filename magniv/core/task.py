@@ -99,7 +99,9 @@ class Task:
         valid_resources = set(["cpu", "memory"])
         invalid_resources = set([r.lower() for r in resources.keys()]) - valid_resources
         if len(invalid_resources) > 0:
-            raise KeyError(f"{invalid_resources} are not valid resources for a task. Valid resources are {valid_resources}")
+            raise KeyError(
+                f"{invalid_resources} are not valid resources for a task. Valid resources are {valid_resources}"
+            )
         if "cpu" in resources.keys():
             clean_dict["limit_cpu"] = resources["cpu"]
         if "memory" in resources.keys():
