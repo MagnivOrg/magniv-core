@@ -26,6 +26,9 @@ def hello_world():
 def hello_world_2():
     print(f"Hello world, the time is {datetime.now()}")
 
+@task(schedule="@daily", resources={"cpu": "500mi", "memory": "3Gi"})
+def resourceful_valid():
+    print("using custom resources!")
 
 def dummy_task():
     print("This is a dummy task")
@@ -171,3 +174,18 @@ class TestBuild:
         json_pth = f"{subdir_reqs_file}/dump.json"
         save_tasks(task_folder=subdir_reqs_file, dump_save_pth=json_pth)
         assert os.path.exists(json_pth) == True
+
+    def test_task_builds_with_valid_custom_resources(self, file):
+        task_list = get_task_list([{"filepath": f"{file}/main.py", "req": None}])
+        for task in task_list:
+            if task["name"] == "resourceful_valid":
+                assert task["resources"] == {
+                    "limit_cpu": "500mi",
+                    "limit_memory": "3Gi",
+                }
+
+    def test_task_ignores_invalid_custom_resources(self, file):
+        task_list = get_task_list([{"filepath": f"{file}/main.py", "req": None}])
+        for task in task_list:
+            if task["name"] == "resourceful_invalid":
+                assert not task["resources"]
