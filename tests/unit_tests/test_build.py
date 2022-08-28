@@ -30,10 +30,6 @@ def hello_world_2():
 def resourceful_valid():
     print("using custom resources!")
 
-@task(schedule="@daily", resources={"garbage": 222, "gpu": "over9000"})
-def resourceful_invalid():
-    print("using bad resources")
-
 def dummy_task():
     print("This is a dummy task")
     return True
