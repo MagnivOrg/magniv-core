@@ -21,13 +21,14 @@ class Task:
     KEY_PATTERN = r"^[\w\-.]+$"
 
     def __init__(
-        self, function, schedule=None, resources=None, description=None, key=None
+        self, function, schedule=None, webhook_enabled=False, resources=None, description=None, key=None
     ) -> None:
         if schedule is None:
             raise ValueError("schedule must be provided")
         if not self._is_valid_schedule(schedule):
             raise ValueError(f"{schedule} is not a valid cron schedule")
         self.schedule = schedule
+        self.webhook_enabled = webhook_enabled
         self.resources = self._make_valid_resources(resources)
         self.description = description
         self.function = function
@@ -45,6 +46,7 @@ class Task:
     def as_dict(self) -> dict:
         return {
             "schedule": self.schedule,
+            "webhook_enabled": self.webhook_enabled,
             "resources": self.resources,
             "description": self.description,
             "name": self.name,
@@ -108,7 +110,7 @@ class Task:
         return clean_dict
 
 
-def task(_func=None, *, schedule=None, resources=None, description=None, key=None) -> Callable:
+def task(_func=None, *, schedule=None, webhook_enabled=False, resources=None, description=None, key=None) -> Callable:
     """
     If they pass in a function, then we raise an error. If they dont pass in a function, then we return
     a wrapper function that takes a function as an argument
@@ -126,6 +128,6 @@ def task(_func=None, *, schedule=None, resources=None, description=None, key=Non
         raise ValueError("You must use arguments with magniv, it can not be called alone")
 
     def wrapper(function):
-        return Task(function, schedule=schedule, resources=None, description=description, key=key)
+        return Task(function, schedule=schedule, webhook_enabled=webhook_enabled, resources=resources, description=description, key=key)
 
     return wrapper
