@@ -157,17 +157,8 @@ def get_magniv_tasks(
                                 [val.value for val in kw.value.values],
                             )
                         )
-<<<<<<< HEAD
                     elif isinstance(kw.value, ast.List):
                         constructed_decorator_values[kw.arg] = [i.id for i in kw.value.elts]
-=======
-                    if isinstance(kw.value, ast.List):
-                        print(kw.value, dir(kw.value))
-                        for v in kw.value:
-                            print(v)
-                            print(dir(v))
-                        constructed_decorator_values[kw.arg] = [i.value for i in kw.value.elts]
->>>>>>> b632faa (debugging)
                     else:
                         constructed_decorator_values[kw.arg] = kw.value.value
                 # Verify that the arugments are correct
