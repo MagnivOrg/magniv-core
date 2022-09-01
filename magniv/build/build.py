@@ -147,9 +147,8 @@ def get_magniv_tasks(
                 decorator_name = _get_decorator_name(decorator.func)
                 if decorator_name not in decorator_aliases:
                     continue
-
                 constructed_decorator_values = {}
-                for kw in decorator.keywords:
+                for kw in constructed_decorator_values.keywords:
                     if isinstance(kw.value, ast.Dict):
                         constructed_decorator_values[kw.arg] = dict(
                             zip(
@@ -157,15 +156,10 @@ def get_magniv_tasks(
                                 [val.value for val in kw.value.values],
                             )
                         )
-                    if isinstance(kw.value, ast.List):
-                        print(kw.value, dir(kw.value))
-                        for v in kw.value:
-                            print(v)
-                            print(dir(v))
-                        constructed_decorator_values[kw.arg] = [i.value for i in kw.value.elts]
+                    elif isinstance(kw.value, ast.List):
+                        constructed_decorator_values[kw.arg] = [i.id for i in kw.value.elts]
                     else:
                         constructed_decorator_values[kw.arg] = kw.value.value
-
                 # Verify that the arugments are correct
                 try:
                     dummy_function = lambda x: None
@@ -176,7 +170,6 @@ def get_magniv_tasks(
                     raise Exception(
                         f"Building the task {node.name} in {core_values['location']} on line {core_values['line_number']} raised the following {type(e).__name__}: {e}"
                     )
-
                 info = {**core_values, **decorator_values}
                 if missing_reqs := list({"schedule"} - set(info)):
                     raise ValueError(
