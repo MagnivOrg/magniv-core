@@ -158,6 +158,10 @@ def get_magniv_tasks(
                             )
                         )
                     if isinstance(kw.value, ast.List):
+                        print(kw.value, dir(kw.value))
+                        for v in kw.value:
+                            print(v)
+                            print(dir(v))
                         constructed_decorator_values[kw.arg] = [i.value for i in kw.value.elts]
                     else:
                         constructed_decorator_values[kw.arg] = kw.value.value
