@@ -82,6 +82,7 @@ def get_decorated_nodes(parsed_ast: ast.AST) -> List:
 
     decorator_aliases = []
     decorated_nodes = []
+    general_aliased_function_imports = {}
     for node in ast.walk(parsed_ast):
         # Add decorated functions
         if (
@@ -93,6 +94,9 @@ def get_decorated_nodes(parsed_ast: ast.AST) -> List:
 
         # Add possible decorator aliases
         if isinstance(node, ast.Import):
+            for i in node.names:
+                if i.asname is not None:
+                    general_aliased_function_imports[i.asname] = i.name
             import_variants = [
                 # import magniv --- @magniv.core.task
                 {"import": "magniv", "decorator_suffix": ".core.task"},
@@ -103,6 +107,9 @@ def get_decorated_nodes(parsed_ast: ast.AST) -> List:
                 if alias := _get_ast_alias(node.names, variant["import"]):
                     decorator_aliases.append(alias + variant["decorator_suffix"])
         elif isinstance(node, ast.ImportFrom):
+            for i in node.names:
+                if i.asname is not None:
+                    general_aliased_function_imports[i.asname] = i.name
             if node.module == "magniv.core":
                 # from magniv.core import task --- @task
                 if alias := _get_ast_alias(node.names, "task"):
@@ -111,13 +118,14 @@ def get_decorated_nodes(parsed_ast: ast.AST) -> List:
                 # from magniv import core --- @core.task
                 if alias := _get_ast_alias(node.names, "core"):
                     decorator_aliases.append(f"{alias}.task")
-    return decorated_nodes, decorator_aliases
+    return decorated_nodes, decorator_aliases, general_aliased_function_imports
 
 
 def get_magniv_tasks(
     filepath: str,
     decorated_nodes: List,
     decorator_aliases: List,
+    general_aliased_function_imports: List,
     root: str,
     req: str,
     used_keys: Dict,
@@ -158,7 +166,10 @@ def get_magniv_tasks(
                             )
                         )
                     elif isinstance(kw.value, ast.List):
-                        constructed_decorator_values[kw.arg] = [i.id for i in kw.value.elts]
+                        constructed_decorator_values[kw.arg] = [
+                            general_aliased_function_imports.get(i.id, i.id)
+                            for i in kw.value.elts
+                        ]
                     else:
                         constructed_decorator_values[kw.arg] = kw.value.value
                 # Verify that the arugments are correct
@@ -246,12 +257,17 @@ def get_task_list(
                 parsed_ast = ast.parse(f.read())
             except UnicodeDecodeError as e:
                 continue
-            decorated_nodes, decorator_aliases = get_decorated_nodes(parsed_ast)
+            (
+                decorated_nodes,
+                decorator_aliases,
+                general_aliased_function_imports,
+            ) = get_decorated_nodes(parsed_ast)
             tasks_list.extend(
                 get_magniv_tasks(
                     fileinfo["filepath"],
                     decorated_nodes,
                     decorator_aliases,
+                    general_aliased_function_imports,
                     root=task_folder,
                     req=fileinfo["req"],
                     used_keys=used_keys,
@@ -301,6 +317,5 @@ def build(task_folder: str = None):
             "You must have a tasks folder that contains all of your tasks files"
         )
 
-    # Hack to fix project imports by adding project directory to Python path
     sys.path.append(os.getcwd() + task_folder)
     save_tasks(task_folder, save_dir=save_dir)
