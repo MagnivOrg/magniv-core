@@ -2,12 +2,7 @@ import re
 from functools import update_wrapper
 from typing import Callable, Dict
 
-from croniter import (
-    CroniterBadCronError,
-    CroniterBadDateError,
-    CroniterNotAlphaError,
-    croniter,
-)
+from croniter import CroniterBadCronError, CroniterBadDateError, CroniterNotAlphaError, croniter
 
 
 class Task:
