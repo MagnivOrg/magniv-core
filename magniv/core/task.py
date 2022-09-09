@@ -2,7 +2,12 @@ import re
 from functools import update_wrapper
 from typing import Callable, Dict
 
-from croniter import CroniterBadCronError, CroniterBadDateError, CroniterNotAlphaError, croniter
+from croniter import (
+    CroniterBadCronError,
+    CroniterBadDateError,
+    CroniterNotAlphaError,
+    croniter,
+)
 
 
 class Task:
@@ -21,7 +26,13 @@ class Task:
     KEY_PATTERN = r"^[\w\-.]+$"
 
     def __init__(
-        self, function, schedule=None, enable_webhook_trigger=False, resources=None, description=None, key=None
+        self,
+        function,
+        schedule=None,
+        enable_webhook_trigger=False,
+        resources=None,
+        description=None,
+        key=None,
     ) -> None:
         if schedule is None:
             raise ValueError("schedule must be provided")
@@ -110,7 +121,15 @@ class Task:
         return clean_dict
 
 
-def task(_func=None, *, schedule=None, enable_webhook_trigger=False, resources=None, description=None, key=None) -> Callable:
+def task(
+    _func=None,
+    *,
+    schedule=None,
+    enable_webhook_trigger=False,
+    resources=None,
+    description=None,
+    key=None,
+) -> Callable:
     """
     If they pass in a function, then we raise an error. If they dont pass in a function, then we return
     a wrapper function that takes a function as an argument
@@ -126,9 +145,18 @@ def task(_func=None, *, schedule=None, enable_webhook_trigger=False, resources=N
     """
     if _func is not None:  # this means they did not pass in any arguments like @magniv
         # The reason we do this here is bc in the case they dont pass arguments we dont need the extra wrapper below.
-        raise ValueError("You must use arguments with magniv, it can not be called alone")
+        raise ValueError(
+            "You must use arguments with magniv, it can not be called alone"
+        )
 
     def wrapper(function):
-        return Task(function, schedule=schedule, enable_webhook_trigger=enable_webhook_trigger, resources=resources, description=description, key=key)
+        return Task(
+            function,
+            schedule=schedule,
+            enable_webhook_trigger=enable_webhook_trigger,
+            resources=resources,
+            description=description,
+            key=key,
+        )
 
     return wrapper
