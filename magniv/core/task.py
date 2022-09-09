@@ -145,9 +145,7 @@ def task(
     """
     if _func is not None:  # this means they did not pass in any arguments like @magniv
         # The reason we do this here is bc in the case they dont pass arguments we dont need the extra wrapper below.
-        raise ValueError(
-            "You must use arguments with magniv, it can not be called alone"
-        )
+        raise ValueError("You must use arguments with magniv, it can not be called alone")
 
     def wrapper(function):
         return Task(
