@@ -118,7 +118,8 @@ def task(_func=None, *, schedule=None, enable_webhook_trigger=False, resources=N
     :param _func: This is the function that is being wrapped
     :param schedule: This is the schedule that the task will run on. It can be a cron string, or a
     datetime.timedelta object
-    :param resources: the cpu and memory requirements for this function
+    :param enable_webhook_trigger: Specifices whether this task can be triggered via webhook (see dashboard for webhook URL)
+    :param resources: The cpu and memory requirements for this function
     :param description: A description of the task
     :param key: This is the name of the task key. It is used to identify the task in the database
     :return: A function that takes in a function and returns a task instance.
