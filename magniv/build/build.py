@@ -150,20 +150,25 @@ def get_magniv_tasks(
 
                 constructed_decorator_values = {}
                 for kw in decorator.keywords:
-                    if kw.arg == "trigger_on_success":
+                    if kw.arg == "on_success":
                         # Keyword check to prevent a stored variable being passed here
                         if not isinstance(kw.value, ast.List):
-                            raise ValueError(f'Keyword argument "trigger_on_success" to task {node.name} is required to be a list[str]')
+                            raise ValueError(f'Keyword argument "on_success" to task {node.name} is required to be a list[str]')
                         constructed_decorator_values[kw.arg] = [i.value for i in kw.value.elts]
-                    elif isinstance(kw.value, ast.Dict):
+                    elif kw.arg == "resources":
+                        if not isinstance(kw.value, ast.Dict):
+                            raise ValueError(f'Keyword argument "resources" to task {node.name} is required to be a dict')
                         constructed_decorator_values[kw.arg] = dict(
                             zip(
                                 [key.value for key in kw.value.keys],
                                 [val.value for val in kw.value.values],
                             )
                         )
-                    else:
+                    elif kw.arg in ["key", "schedule", "enable_webhook_trigger", "description"]:
                         constructed_decorator_values[kw.arg] = kw.value.value
+                    else:
+                        raise ValueError(f'Unknown kwarg "{kw.arg}" provided to task {node.name}')
+
                 try:
                     dummy_function = lambda x: None
                     dummy_function.__name__ = node.name
@@ -262,7 +267,7 @@ def get_task_list(
 
     # Check for invalid calls
     for task in tasks_list:
-        for triggered_task in task["trigger_on_success"]:
+        for triggered_task in task["on_success"]:
             if triggered_task not in used_keys:
                 raise ValueError(
                     f'Task "{task["key"]}" triggers unkown task "{triggered_task}".')
@@ -270,7 +275,7 @@ def get_task_list(
     # Add is_called_by to each task
     called_by = {key: [] for key in used_keys}
     for task in tasks_list:
-        for triggered_task in task["trigger_on_success"]:
+        for triggered_task in task["on_success"]:
             called_by[triggered_task].append(task["key"])
     for task in tasks_list:
         task['is_called_by'] = called_by[task["key"]] 

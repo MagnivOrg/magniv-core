@@ -17,17 +17,9 @@ TEST_FILE = """from datetime import datetime
 
 from magniv.core import task
 
-@task(schedule="@daily", on_success=['task_b', 'bad_key'])
+@task(schedule="@daily", bad=True)
 def task_a():
     print("I")
-
-@task()
-def task_b():
-    print("i'm only triggered by task A")
-
-@task(key="task_c")
-def bad_key():
-    print("i'm only triggered by task A")
 
 
 if __name__ == "__main__":
