@@ -44,12 +44,7 @@ def _on_failure(context):
     callback_post("failure", context)
 
 
-dag = DAG(
-    dag_id,
-    schedule_interval=scheduletoreplace,
-    default_args=default_args,
-    catchup=False,
-)
+dag = DAG(dag_id, schedule_interval=scheduletoreplace, default_args=default_args, catchup=False,)
 
 with dag:
     t1 = KubernetesPodOperator(

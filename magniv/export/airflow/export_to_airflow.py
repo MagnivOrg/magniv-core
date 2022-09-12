@@ -90,12 +90,7 @@ def export_to_airflow(
 
 
 def _create_docker_image(
-    python_version,
-    requirements,
-    key,
-    gcp=False,
-    gcp_project_id=None,
-    env_file_path=None,
+    python_version, requirements, key, gcp=False, gcp_project_id=None, env_file_path=None,
 ):
     """
     It creates a Dockerfile in the same directory as the requirements.txt file, and then builds a docker
