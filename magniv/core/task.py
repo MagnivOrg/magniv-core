@@ -16,7 +16,7 @@ class Task:
     :param resources: the cpu and memory requirements for this function
     :param description: description of the function, to be used for the auto generated documentation
     :param key: the unique key that will reference the function, default is the function of the name
-    :param calls: list of downstream task keys that are triggered after this task's successful completion. Adding multiple tasks to this list will add multiple downstream calls.
+    :param trigger_on_success: list of downstream task keys that are triggered after this task's successful completion. Adding multiple tasks to this list will add multiple downstream calls.
     """
 
     KEY_PATTERN = r"^[\w\-.]+$"
@@ -29,7 +29,7 @@ class Task:
         resources=None,
         description=None,
         key=None,
-        calls=None
+        trigger_on_success=None
     ) -> None:
         if schedule is not None and not self._is_valid_schedule(schedule):
             raise ValueError(f"{schedule} is not a valid cron schedule")
@@ -44,7 +44,7 @@ class Task:
             raise ValueError(
                 f"{key} is not a valid key, the key can only contain alphanumeric characters, -, _, . and space."
             )
-        self.calls = calls if calls else []
+        self.trigger_on_success = trigger_on_success if trigger_on_success else []
 
         update_wrapper(self, function)
 
@@ -56,7 +56,7 @@ class Task:
             "description": self.description,
             "name": self.name,
             "key": self.key,
-            "calls": self.calls,
+            "trigger_on_success": self.trigger_on_success,
         }
 
     def __call__(self, *args, **kwds) -> Callable:
@@ -122,7 +122,7 @@ def task(
     resources=None,
     description=None,
     key=None,
-    calls=None,
+    trigger_on_success=None,
 ) -> Callable:
     """
     If they pass in a function, then we raise an error. If they dont pass in a function, then we return
@@ -135,8 +135,8 @@ def task(
     :param resources: The cpu and memory requirements for this function
     :param description: A description of the task
     :param key: This is the name of the task key. It is used to identify the task in the database
-    :param calls: This is a list of downstream task keys (usually the @task-decorated-function's name) that 
-    are triggered by this task on successful completion. Adding multiple tasks to this list will add multiple downstream triggers.
+    :param trigger_on_success: This is a list of downstream task keys (usually the @task-decorated-function's name) that 
+    are triggered by this task on successful completion. Adding multiple tasks to this list will add multiple downstream triggers. (list[str])
     :return: A function that takes in a function and returns a task instance.
     """
     if _func is not None:  # this means they did not pass in any arguments like @magniv
@@ -151,7 +151,7 @@ def task(
             resources=resources,
             description=description,
             key=key,
-            calls=calls
+            trigger_on_success=trigger_on_success
         )
 
     return wrapper

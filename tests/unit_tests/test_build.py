@@ -34,7 +34,7 @@ def resourceful_valid():
 def playing_webhooky():
     print("I'M TRIGGERED (by a webhook)!")
 
-@task(schedule="@daily", calls=['task_b', 'c'])
+@task(schedule="@daily", trigger_on_success=['task_b', 'c'])
 def task_a():
     print("I")
 
@@ -42,7 +42,7 @@ def task_a():
 def task_b():
     print("i'm only triggered by task A")
 
-@task(key="c", calls=['task_b'])
+@task(key="c", trigger_on_success=['task_b'])
 def task_c():
     print("i'm only triggered by task A")
 
@@ -220,11 +220,11 @@ class TestBuild:
             elif task["name"] == "c":
                 assert not task["schedule"]
 
-    def test_task_builds_with_calls(self, file):
+    def test_task_builds_with_trigger_on_success(self, file):
         task_list = get_task_list([{"filepath": f"{file}/main.py", "req": None}])
         for task in task_list:
             if task["name"] == "task_a":
-                assert task["calls"] == ["task_b", "c"]
+                assert task["trigger_on_success"] == ["task_b", "c"]
             if task["name"] == "task_b":
                 assert task["is_called_by"] == ["task_a", "c"]
             if task["name"] == "c":

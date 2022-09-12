@@ -17,7 +17,7 @@ TEST_FILE = """from datetime import datetime
 
 from magniv.core import task
 
-@task(schedule="@daily", calls=['task_b', 'bad_key'])
+@task(schedule="@daily", trigger_on_success=['task_b', 'bad_key'])
 def task_a():
     print("I")
 
