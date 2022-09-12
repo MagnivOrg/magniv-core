@@ -1,9 +1,18 @@
 import re
 from functools import update_wrapper
 from typing import Callable, Dict
+import ast
 
 from croniter import CroniterBadCronError, CroniterBadDateError, CroniterNotAlphaError, croniter
 
+task_kwargs = {
+    "on_success": {"ast_type": ast.List, "readable": "list[str]"},
+    "resources": {"ast_type": ast.Dict, "readable": "dict"},
+    "key": {"ast_type": ast.Constant, "readable": "str"},
+    "schedule": {"ast_type": ast.Constant, "readable": "str"},
+    "enable_webhook_trigger": {"ast_type": ast.Constant, "readable": "str"},
+    "description": {"ast_type": ast.Constant, "readable": "str"},
+}
 
 class Task:
     """
