@@ -6,7 +6,7 @@ setup(
     author_email="hello@magniv.io",
     url="https://www.magniv.io",
     project_urls={"Documentation": "https://docs.magniv.io",},
-    version="0.1.50",
+    version="0.1.51",
     py_modules=["magniv"],
     packages=find_packages(),
     install_requires=["Click", "docker", "python-dotenv", "requests", "croniter"],
