@@ -30,6 +30,10 @@ def hello_world_2():
 def resourceful_valid():
     print("using custom resources!")
 
+@task(schedule="@daily", enable_webhook_trigger=True)
+def playing_webhooky():
+    print("I'M TRIGGERED")
+
 def dummy_task():
     print("This is a dummy task")
     return True
@@ -189,3 +193,9 @@ class TestBuild:
         for task in task_list:
             if task["name"] == "resourceful_invalid":
                 assert not task["resources"]
+
+    def test_task_builds_with_webhook_trigger_enabled(self, file):
+        task_list = get_task_list([{"filepath": f"{file}/main.py", "req": None}])
+        for task in task_list:
+            if task["name"] == "playing_webhooky":
+                assert task["enable_webhook_trigger"]

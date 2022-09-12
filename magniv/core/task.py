@@ -16,17 +16,27 @@ class Task:
     :param resources: the cpu and memory requirements for this function
     :param description: description of the function, to be used for the auto generated documentation
     :param key: the unique key that will reference the function, default is the function of the name
-    :param calls: list of upstream task keys that trigger this task on successful completion. Adding multiple tasks to this list will add multiple triggers.
+    :param calls: list of downstream task keys that are triggered after this task's successful completion. Adding multiple tasks to this list will add multiple downstream calls.
     """
 
     KEY_PATTERN = r"^[\w\-.]+$"
 
-    def __init__(self, function, schedule=None, resources=None, description=None, key=None, calls=None) -> None:
+    def __init__(
+        self,
+        function,
+        schedule=None,
+        enable_webhook_trigger=False,
+        resources=None,
+        description=None,
+        key=None,
+        calls=None
+    ) -> None:
         if schedule is None:
             raise ValueError("schedule must be provided")
         if not self._is_valid_schedule(schedule):
             raise ValueError(f"{schedule} is not a valid cron schedule")
         self.schedule = schedule
+        self.enable_webhook_trigger = enable_webhook_trigger
         self.resources = self._make_valid_resources(resources)
         self.description = description
         self.function = function
@@ -45,6 +55,7 @@ class Task:
     def as_dict(self) -> dict:
         return {
             "schedule": self.schedule,
+            "enable_webhook_trigger": self.enable_webhook_trigger,
             "resources": self.resources,
             "description": self.description,
             "name": self.name,
@@ -89,7 +100,6 @@ class Task:
         Takes in a resources dictionary with generic parameters and converts it to the appropriate syntax
         for our infrastructure
         #TODO: enforce reasonable limits for quantity of resources
-
         :param key: The generic resources dict from the task decorator
         :return: A dict with correct syntax
         """
@@ -108,8 +118,16 @@ class Task:
             clean_dict["limit_memory"] = resources["memory"]
         return clean_dict
 
-
-def task(_func=None, *, schedule=None, resources=None, description=None, key=None, calls=None) -> Callable:
+def task(
+    _func=None,
+    *,
+    schedule=None,
+    enable_webhook_trigger=False,
+    resources=None,
+    description=None,
+    key=None,
+    calls=None,
+) -> Callable:
     """
     If they pass in a function, then we raise an error. If they dont pass in a function, then we return
     a wrapper function that takes a function as an argument
@@ -117,11 +135,12 @@ def task(_func=None, *, schedule=None, resources=None, description=None, key=Non
     :param _func: This is the function that is being wrapped
     :param schedule: This is the schedule that the task will run on. It can be a cron string, or a
     datetime.timedelta object
-    :param resources: the cpu and memory requirements for this function
+    :param enable_webhook_trigger: Specifices whether this task can be triggered via webhook (see dashboard for webhook URL)
+    :param resources: The cpu and memory requirements for this function
     :param description: A description of the task
     :param key: This is the name of the task key. It is used to identify the task in the database
-    :param calls: This is a list of upstream task keys (usually @task decorated function names) that 
-    trigger this task on successful completion. Adding multiple tasks to this list will add multiple triggers.
+    :param calls: This is a list of downstream task keys (usually the @task-decorated-function's name) that 
+    are triggered by this task on successful completion. Adding multiple tasks to this list will add multiple downstream triggers.
     :return: A function that takes in a function and returns a task instance.
     """
     if _func is not None:  # this means they did not pass in any arguments like @magniv
@@ -129,6 +148,14 @@ def task(_func=None, *, schedule=None, resources=None, description=None, key=Non
         raise ValueError("You must use arguments with magniv, it can not be called alone")
 
     def wrapper(function):
-        return Task(function, schedule=schedule, resources=resources, description=description, key=key, calls=calls)
+        return Task(
+            function,
+            schedule=schedule,
+            enable_webhook_trigger=enable_webhook_trigger,
+            resources=resources,
+            description=description,
+            key=key,
+            calls=calls
+        )
 
     return wrapper
