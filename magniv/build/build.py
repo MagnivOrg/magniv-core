@@ -260,10 +260,20 @@ def get_task_list(
                 )
             )
 
+    # Check for invalid calls
     for task in tasks_list:
         for triggered_task in task["calls"]:
             if triggered_task not in used_keys:
-                raise ValueError(f'Task "{task["key"]}" triggers unkown task "{triggered_task}".')
+                raise ValueError(
+                    f'Task "{task["key"]}" triggers unkown task "{triggered_task}".')
+
+    # Add is_called_by to each task
+    called_by = {key: [] for key in used_keys}
+    for task in tasks_list:
+        for triggered_task in task["calls"]:
+            called_by[triggered_task].append(task["key"])
+    for task in tasks_list:
+        task['is_called_by'] = called_by[task["key"]] 
 
     return tasks_list
 

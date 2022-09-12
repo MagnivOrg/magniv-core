@@ -42,8 +42,8 @@ def task_a():
 def task_b():
     print("i'm only triggered by task A")
 
-@task()
-def task_c(key="c"):
+@task(key="c", calls=['task_b'])
+def task_c():
     print("i'm only triggered by task A")
 
 def dummy_task():
@@ -225,3 +225,7 @@ class TestBuild:
         for task in task_list:
             if task["name"] == "task_a":
                 assert task["calls"] == ["task_b", "c"]
+            if task["name"] == "task_b":
+                assert task["is_called_by"] == ["task_a", "c"]
+            if task["name"] == "c":
+                assert task["is_called_by"] == ["task_a"]
