@@ -39,10 +39,8 @@ class Task:
         self.description = description
         self.function = function
         self.name = function.__name__
-        self.key = key
-        if key is None:
-            self.key = self.name
-        elif not self._is_valid_key(key):
+        self.key = key if key else self.name
+        if key and not self._is_valid_key(key):
             raise ValueError(
                 f"{key} is not a valid key, the key can only contain alphanumeric characters, -, _, . and space."
             )

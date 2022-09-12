@@ -259,7 +259,12 @@ def get_task_list(
                     used_keys=used_keys,
                 )
             )
-    # import pdb; pdb.set_trace()
+
+    for task in tasks_list:
+        for triggered_task in task["calls"]:
+            if triggered_task not in used_keys:
+                raise ValueError(f'Task "{task["key"]}" triggers unkown task "{triggered_task}".')
+
     return tasks_list
 
 
