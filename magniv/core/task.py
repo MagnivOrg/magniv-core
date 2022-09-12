@@ -1,8 +1,18 @@
+import ast
 import re
 from functools import update_wrapper
 from typing import Callable, Dict
 
 from croniter import CroniterBadCronError, CroniterBadDateError, CroniterNotAlphaError, croniter
+
+task_kwargs = {
+    "on_success": {"ast_type": ast.List, "readable": "list[str]"},
+    "resources": {"ast_type": ast.Dict, "readable": "dict"},
+    "key": {"ast_type": ast.Constant, "readable": "str"},
+    "schedule": {"ast_type": ast.Constant, "readable": "str"},
+    "enable_webhook_trigger": {"ast_type": ast.Constant, "readable": "str"},
+    "description": {"ast_type": ast.Constant, "readable": "str"},
+}
 
 
 class Task:
@@ -12,10 +22,12 @@ class Task:
     that are to be deployed.
 
     :param function: the function that is being decorated
-    :param schedule: the cron schedule that this function will be scheduled with
+    :param schedule: the cron-style schedule interval that determines when this function runs
+    :param enable_webhook_trigger: boolean flag to enable task being triggered through webhook
     :param resources: the cpu and memory requirements for this function
     :param description: description of the function, to be used for the auto generated documentation
     :param key: the unique key that will reference the function, default is the function of the name
+    :param on_success: list of downstream task keys that are triggered after this task's successful completion. Adding multiple tasks to this list will add multiple downstream calls.
     """
 
     KEY_PATTERN = r"^[\w\-.]+$"
@@ -28,10 +40,9 @@ class Task:
         resources=None,
         description=None,
         key=None,
+        on_success=None,
     ) -> None:
-        if schedule is None:
-            raise ValueError("schedule must be provided")
-        if not self._is_valid_schedule(schedule):
+        if schedule is not None and not self._is_valid_schedule(schedule):
             raise ValueError(f"{schedule} is not a valid cron schedule")
         self.schedule = schedule
         self.enable_webhook_trigger = enable_webhook_trigger
@@ -39,13 +50,12 @@ class Task:
         self.description = description
         self.function = function
         self.name = function.__name__
-        self.key = key
-        if key is None:
-            self.key = self.name
-        elif not self._is_valid_key(key):
+        self.key = key if key else self.name
+        if key and not self._is_valid_key(key):
             raise ValueError(
                 f"{key} is not a valid key, the key can only contain alphanumeric characters, -, _, . and space."
             )
+        self.on_success = on_success if on_success else []
 
         update_wrapper(self, function)
 
@@ -57,6 +67,7 @@ class Task:
             "description": self.description,
             "name": self.name,
             "key": self.key,
+            "on_success": self.on_success,
         }
 
     def __call__(self, *args, **kwds) -> Callable:
@@ -96,7 +107,6 @@ class Task:
         Takes in a resources dictionary with generic parameters and converts it to the appropriate syntax
         for our infrastructure
         #TODO: enforce reasonable limits for quantity of resources
-
         :param key: The generic resources dict from the task decorator
         :return: A dict with correct syntax
         """
@@ -124,6 +134,7 @@ def task(
     resources=None,
     description=None,
     key=None,
+    on_success=None,
 ) -> Callable:
     """
     If they pass in a function, then we raise an error. If they dont pass in a function, then we return
@@ -131,11 +142,13 @@ def task(
 
     :param _func: This is the function that is being wrapped
     :param schedule: This is the schedule that the task will run on. It can be a cron string, or a
-    datetime.timedelta object
+    datetime.timedelta object, or None
     :param enable_webhook_trigger: Specifices whether this task can be triggered via webhook (see dashboard for webhook URL)
     :param resources: The cpu and memory requirements for this function
     :param description: A description of the task
     :param key: This is the name of the task key. It is used to identify the task in the database
+    :param on_success: This is a list of downstream task keys (usually the @task-decorated-function's name) that
+    are triggered by this task on successful completion. Adding multiple tasks to this list will add multiple downstream triggers. (list[str])
     :return: A function that takes in a function and returns a task instance.
     """
     if _func is not None:  # this means they did not pass in any arguments like @magniv
@@ -150,6 +163,7 @@ def task(
             resources=resources,
             description=description,
             key=key,
+            on_success=on_success,
         )
 
     return wrapper

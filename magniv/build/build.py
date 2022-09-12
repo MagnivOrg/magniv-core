@@ -5,7 +5,7 @@ import platform
 import sys
 from typing import Dict, List, NoReturn, Tuple
 
-from magniv.core import Task
+from magniv.core import Task, task_kwargs
 from magniv.utils.utils import _save_to_json
 
 
@@ -67,6 +67,32 @@ def _get_decorator_name(func):
         return ".".join([_get_decorator_name(func.value), func.attr])
     return ""
 
+def _extract_task_kwarg_value(kw: ast.keyword, func_name: str):
+    """
+    Extract the kwarg value from the given @task kwarg AST object. Raise error if invalid kwarg.
+
+    Returns:
+      Parsed AST value given to kw.arg
+    """
+    if kw.arg not in task_kwargs:
+        raise ValueError(f'Unknown kwarg "{kw.arg}" provided to task {func_name}')
+
+    arg_type = task_kwargs[kw.arg]["readable"]
+    arg_type_ast = task_kwargs[kw.arg]["ast_type"]
+    if not isinstance(kw.value, arg_type_ast):
+        raise ValueError(f'Keyword argument "{kw.arg}" to task {func_name} is required to be a {arg_type}')
+
+    if arg_type_ast == ast.List:
+        return [i.value for i in kw.value.elts]
+    if arg_type_ast == ast.Dict:
+        return dict(
+            zip(
+                [key.value for key in kw.value.keys],
+                [val.value for val in kw.value.values],
+            )
+        )
+    if arg_type_ast == ast.Constant:
+        return kw.value.value
 
 def get_decorated_nodes(parsed_ast: ast.AST) -> List:
     """
@@ -150,16 +176,7 @@ def get_magniv_tasks(
 
                 constructed_decorator_values = {}
                 for kw in decorator.keywords:
-                    if isinstance(kw.value, ast.Dict):
-                        constructed_decorator_values[kw.arg] = dict(
-                            zip(
-                                [key.value for key in kw.value.keys],
-                                [val.value for val in kw.value.values],
-                            )
-                        )
-                    else:
-                        constructed_decorator_values[kw.arg] = kw.value.value
-                # Verify that the arugments are correct
+                    constructed_decorator_values[kw.arg] = _extract_task_kwarg_value(kw, node.name)
                 try:
                     dummy_function = lambda x: None
                     dummy_function.__name__ = node.name
@@ -255,6 +272,22 @@ def get_task_list(
                     used_keys=used_keys,
                 )
             )
+
+    # Check for invalid calls
+    for task in tasks_list:
+        for triggered_task in task["on_success"]:
+            if triggered_task not in used_keys:
+                raise ValueError(
+                    f'Task "{task["key"]}" triggers unkown task "{triggered_task}".')
+
+    # Add is_called_by to each task
+    called_by = {key: [] for key in used_keys}
+    for task in tasks_list:
+        for triggered_task in task["on_success"]:
+            called_by[triggered_task].append(task["key"])
+    for task in tasks_list:
+        task['is_called_by'] = called_by[task["key"]] 
+
     return tasks_list
 
 

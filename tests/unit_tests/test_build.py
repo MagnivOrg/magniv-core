@@ -32,7 +32,19 @@ def resourceful_valid():
 
 @task(schedule="@daily", enable_webhook_trigger=True)
 def playing_webhooky():
-    print("I'M TRIGGERED")
+    print("I'M TRIGGERED (by a webhook)!")
+
+@task(schedule="@daily", on_success=['task_b', 'c'])
+def task_a():
+    print("I")
+
+@task()
+def task_b():
+    print("i'm only triggered by task A")
+
+@task(key="c", on_success=['task_b'])
+def task_c():
+    print("i'm only triggered by task A")
 
 def dummy_task():
     print("This is a dummy task")
@@ -188,8 +200,32 @@ class TestBuild:
                     "limit_memory": "3Gi",
                 }
 
+    def test_task_ignores_invalid_custom_resources(self, file):
+        task_list = get_task_list([{"filepath": f"{file}/main.py", "req": None}])
+        for task in task_list:
+            if task["name"] == "resourceful_invalid":
+                assert not task["resources"]
+
     def test_task_builds_with_webhook_trigger_enabled(self, file):
         task_list = get_task_list([{"filepath": f"{file}/main.py", "req": None}])
         for task in task_list:
             if task["name"] == "playing_webhooky":
                 assert task["enable_webhook_trigger"]
+
+    def test_task_builds_without_schedule(self, file):
+        task_list = get_task_list([{"filepath": f"{file}/main.py", "req": None}])
+        for task in task_list:
+            if task["name"] == "task_b":
+                assert not task["schedule"]
+            elif task["name"] == "c":
+                assert not task["schedule"]
+
+    def test_task_builds_with_on_success(self, file):
+        task_list = get_task_list([{"filepath": f"{file}/main.py", "req": None}])
+        for task in task_list:
+            if task["name"] == "task_a":
+                assert task["on_success"] == ["task_b", "c"]
+            if task["name"] == "task_b":
+                assert task["is_called_by"] == ["task_a", "c"]
+            if task["name"] == "c":
+                assert task["is_called_by"] == ["task_a"]
