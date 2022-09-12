@@ -158,7 +158,9 @@ def get_magniv_tasks(
                             )
                         )
                     elif isinstance(kw.value, ast.List):
-                        constructed_decorator_values[kw.arg] = [i.id for i in kw.value.elts]
+                        constructed_decorator_values[kw.arg] = [
+                            i.value if isinstance(i, ast.Constant) else i.id for i in kw.value.elts
+                        ]
                     else:
                         constructed_decorator_values[kw.arg] = kw.value.value
                 # Verify that the arugments are correct
@@ -257,6 +259,7 @@ def get_task_list(
                     used_keys=used_keys,
                 )
             )
+    # import pdb; pdb.set_trace()
     return tasks_list
 
 

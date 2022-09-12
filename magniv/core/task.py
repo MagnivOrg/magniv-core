@@ -12,7 +12,7 @@ class Task:
     that are to be deployed.
 
     :param function: the function that is being decorated
-    :param schedule: the cron schedule that this function will be scheduled with
+    :param schedule: the cron-style schedule interval that determines when this function runs
     :param resources: the cpu and memory requirements for this function
     :param description: description of the function, to be used for the auto generated documentation
     :param key: the unique key that will reference the function, default is the function of the name
@@ -31,9 +31,7 @@ class Task:
         key=None,
         calls=None
     ) -> None:
-        if schedule is None:
-            raise ValueError("schedule must be provided")
-        if not self._is_valid_schedule(schedule):
+        if schedule is not None and not self._is_valid_schedule(schedule):
             raise ValueError(f"{schedule} is not a valid cron schedule")
         self.schedule = schedule
         self.enable_webhook_trigger = enable_webhook_trigger
@@ -134,7 +132,7 @@ def task(
 
     :param _func: This is the function that is being wrapped
     :param schedule: This is the schedule that the task will run on. It can be a cron string, or a
-    datetime.timedelta object
+    datetime.timedelta object, or None
     :param enable_webhook_trigger: Specifices whether this task can be triggered via webhook (see dashboard for webhook URL)
     :param resources: The cpu and memory requirements for this function
     :param description: A description of the task
