@@ -1,7 +1,7 @@
+import ast
 import re
 from functools import update_wrapper
 from typing import Callable, Dict
-import ast
 
 from croniter import CroniterBadCronError, CroniterBadDateError, CroniterNotAlphaError, croniter
 
@@ -13,6 +13,7 @@ task_kwargs = {
     "enable_webhook_trigger": {"ast_type": ast.Constant, "readable": "str"},
     "description": {"ast_type": ast.Constant, "readable": "str"},
 }
+
 
 class Task:
     """
@@ -39,7 +40,7 @@ class Task:
         resources=None,
         description=None,
         key=None,
-        on_success=None
+        on_success=None,
     ) -> None:
         if schedule is not None and not self._is_valid_schedule(schedule):
             raise ValueError(f"{schedule} is not a valid cron schedule")
@@ -124,6 +125,7 @@ class Task:
             clean_dict["limit_memory"] = resources["memory"]
         return clean_dict
 
+
 def task(
     _func=None,
     *,
@@ -145,7 +147,7 @@ def task(
     :param resources: The cpu and memory requirements for this function
     :param description: A description of the task
     :param key: This is the name of the task key. It is used to identify the task in the database
-    :param on_success: This is a list of downstream task keys (usually the @task-decorated-function's name) that 
+    :param on_success: This is a list of downstream task keys (usually the @task-decorated-function's name) that
     are triggered by this task on successful completion. Adding multiple tasks to this list will add multiple downstream triggers. (list[str])
     :return: A function that takes in a function and returns a task instance.
     """
@@ -161,7 +163,7 @@ def task(
             resources=resources,
             description=description,
             key=key,
-            on_success=on_success
+            on_success=on_success,
         )
 
     return wrapper

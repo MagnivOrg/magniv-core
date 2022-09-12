@@ -61,3 +61,11 @@ Similar to tools like Heroku or Netlify, Magniv sets up a CI/CD pipeline from yo
 <div align="center">
   <img src="https://miro.medium.com/max/1240/1*4xigR6AHkwdB9Jfi779UDA.gif" max-height="250px">
 </div>
+
+## Code Quality
+
+Before commits, please run:
+
+```black . --line-length=98``` 
+
+```isort . --profile black --line-length=98```
