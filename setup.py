@@ -8,7 +8,7 @@ setup(
     project_urls={
         "Documentation": "https://docs.magniv.io",
     },
-    version="0.1.49",
+    version="0.1.50",
     py_modules=["magniv"],
     packages=find_packages(),
     install_requires=["Click", "docker", "python-dotenv", "requests", "croniter"],

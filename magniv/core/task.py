@@ -10,7 +10,7 @@ task_kwargs = {
     "resources": {"ast_type": ast.Dict, "readable": "dict"},
     "key": {"ast_type": ast.Constant, "readable": "str"},
     "schedule": {"ast_type": ast.Constant, "readable": "str"},
-    "enable_webhook_trigger": {"ast_type": ast.Constant, "readable": "str"},
+    "webhook_trigger": {"ast_type": ast.Constant, "readable": "str"},
     "description": {"ast_type": ast.Constant, "readable": "str"},
 }
 
@@ -23,7 +23,7 @@ class Task:
 
     :param function: the function that is being decorated
     :param schedule: the cron-style schedule interval that determines when this function runs
-    :param enable_webhook_trigger: boolean flag to enable task being triggered through webhook
+    :param webhook_trigger: boolean flag to enable task being triggered through webhook
     :param resources: the cpu and memory requirements for this function
     :param description: description of the function, to be used for the auto generated documentation
     :param key: the unique key that will reference the function, default is the function of the name
@@ -36,7 +36,7 @@ class Task:
         self,
         function,
         schedule=None,
-        enable_webhook_trigger=False,
+        webhook_trigger=False,
         resources=None,
         description=None,
         key=None,
@@ -45,7 +45,7 @@ class Task:
         if schedule is not None and not self._is_valid_schedule(schedule):
             raise ValueError(f"{schedule} is not a valid cron schedule")
         self.schedule = schedule
-        self.enable_webhook_trigger = enable_webhook_trigger
+        self.webhook_trigger = webhook_trigger
         self.resources = self._make_valid_resources(resources)
         self.description = description
         self.function = function
@@ -62,7 +62,7 @@ class Task:
     def as_dict(self) -> dict:
         return {
             "schedule": self.schedule,
-            "enable_webhook_trigger": self.enable_webhook_trigger,
+            "webhook_trigger": self.webhook_trigger,
             "resources": self.resources,
             "description": self.description,
             "name": self.name,
@@ -130,7 +130,7 @@ def task(
     _func=None,
     *,
     schedule=None,
-    enable_webhook_trigger=False,
+    webhook_trigger=False,
     resources=None,
     description=None,
     key=None,
@@ -143,7 +143,7 @@ def task(
     :param _func: This is the function that is being wrapped
     :param schedule: This is the schedule that the task will run on. It can be a cron string, or a
     datetime.timedelta object, or None
-    :param enable_webhook_trigger: Specifices whether this task can be triggered via webhook (see dashboard for webhook URL)
+    :param webhook_trigger: Specifices whether this task can be triggered via webhook (see dashboard for webhook URL)
     :param resources: The cpu and memory requirements for this function
     :param description: A description of the task
     :param key: This is the name of the task key. It is used to identify the task in the database
@@ -159,7 +159,7 @@ def task(
         return Task(
             function,
             schedule=schedule,
-            enable_webhook_trigger=enable_webhook_trigger,
+            webhook_trigger=webhook_trigger,
             resources=resources,
             description=description,
             key=key,
