@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 TOKEN
+.scrap.py.swp
 
 # C extensions
 *.so
