@@ -3,9 +3,9 @@ from datetime import datetime
 import requests
 from airflow import DAG
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
-from airflow.utils.dates import days_ago
+from datetime import datetime
 
-default_args = {"owner": ownertoreplace, "start_date": days_ago(1)}
+default_args = {"owner": ownertoreplace, "start_date": datetime(2021, 1, 1)}
 
 
 def callback_post(callback_type, context):
