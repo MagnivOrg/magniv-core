@@ -3,7 +3,6 @@ from datetime import datetime
 import requests
 from airflow import DAG
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
-from datetime import datetime
 
 default_args = {"owner": ownertoreplace, "start_date": datetime(2021, 1, 1)}
 
