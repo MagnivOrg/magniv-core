@@ -23,7 +23,12 @@ def build():
 @click.option("--kubernetes-startup-timeout", default=120)
 @click.option("--env-file-path")
 def export(
-    gcp, gcp_project_id, gcp_dag_folder, callback_hook, kubernetes_startup_timeout, env_file_path,
+    gcp,
+    gcp_project_id,
+    gcp_dag_folder,
+    callback_hook,
+    kubernetes_startup_timeout,
+    env_file_path,
 ):
     return m_export(
         gcp=gcp,

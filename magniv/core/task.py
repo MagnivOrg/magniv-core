@@ -84,7 +84,11 @@ class Task:
         try:
             croniter(schedule)
             return True
-        except (CroniterBadCronError, CroniterBadDateError, CroniterNotAlphaError,) as cron_e:
+        except (
+            CroniterBadCronError,
+            CroniterBadDateError,
+            CroniterNotAlphaError,
+        ) as cron_e:
             return False
         return bool(re.match(Task.CRON_PATTERN, schedule))
 

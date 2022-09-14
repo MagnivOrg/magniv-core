@@ -1,9 +1,9 @@
 from datetime import datetime
 
 import requests
-from airflow.utils.dates import days_ago
 from airflow import DAG
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+from airflow.utils.dates import days_ago
 
 default_args = {"owner": ownertoreplace, "start_date": days_ago(1)}
 
@@ -45,7 +45,12 @@ def _on_failure(context):
     callback_post("failure", context)
 
 
-dag = DAG(dag_id, schedule_interval=scheduletoreplace, default_args=default_args, catchup=False,)
+dag = DAG(
+    dag_id,
+    schedule_interval=scheduletoreplace,
+    default_args=default_args,
+    catchup=False,
+)
 
 with dag:
     t1 = KubernetesPodOperator(

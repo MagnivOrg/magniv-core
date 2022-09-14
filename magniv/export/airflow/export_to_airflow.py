@@ -58,7 +58,9 @@ def export_to_airflow(
         print("creating dag ... ")
         with fileinput.input(new_filename, inplace=True) as f:
             for line in f:
-                schedule = "None" if task_info["schedule"] is None else f"""'{task_info["schedule"]}'"""
+                schedule = (
+                    "None" if task_info["schedule"] is None else f"""'{task_info["schedule"]}'"""
+                )
                 line = (
                     line.replace("dag_id", f"""'{task_info["key"]}'""")
                     .replace("ownertoreplace", f"""'{task_info["owner"]}'""")
@@ -92,7 +94,12 @@ def export_to_airflow(
 
 
 def _create_docker_image(
-    python_version, requirements, key, gcp=False, gcp_project_id=None, env_file_path=None,
+    python_version,
+    requirements,
+    key,
+    gcp=False,
+    gcp_project_id=None,
+    env_file_path=None,
 ):
     """
     It creates a Dockerfile in the same directory as the requirements.txt file, and then builds a docker

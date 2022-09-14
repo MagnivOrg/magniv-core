@@ -132,7 +132,9 @@ class TestBuild:
         `get_task_files` is a function that takes a folder path as an argument and returns a list of
         filepaths to all the files in that folder
         """
-        task_files = get_task_files(file,)
+        task_files = get_task_files(
+            file,
+        )
         assert task_files[0]["filepath"] == f"{file}/main.py"
 
     def test_save(self, file):
