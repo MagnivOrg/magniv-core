@@ -52,15 +52,17 @@ def export_to_airflow(
             gcp_project_id=gcp_project_id,
             env_file_path=env_file_path,
         )
+        docker_name, path = (None, None)
         print("docker image created!")
         docker_image_info.append((docker_name, path))
         print("creating dag ... ")
         with fileinput.input(new_filename, inplace=True) as f:
             for line in f:
+                schedule = "None" if task_info["schedule"] is None else f"""'{task_info["schedule"]}'"""
                 line = (
                     line.replace("dag_id", f"""'{task_info["key"]}'""")
                     .replace("ownertoreplace", f"""'{task_info["owner"]}'""")
-                    .replace("scheduletoreplace", f"""'{task_info["schedule"]}'""")
+                    .replace("scheduletoreplace", schedule)
                     .replace("imagetoreplace", f"'{docker_name}'")
                     .replace("filetoreplace", task_info["location"])
                     .replace("functiontoreplace", task_info["name"])
