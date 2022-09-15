@@ -52,7 +52,6 @@ def export_to_airflow(
             gcp_project_id=gcp_project_id,
             env_file_path=env_file_path,
         )
-        docker_name, path = (None, None)
         print("docker image created!")
         docker_image_info.append((docker_name, path))
         print("creating dag ... ")
