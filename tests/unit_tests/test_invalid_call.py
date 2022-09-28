@@ -1,6 +1,7 @@
 import ast
 import os
 from typing import Union
+from xml.etree.ElementTree import QName
 
 import pytest
 

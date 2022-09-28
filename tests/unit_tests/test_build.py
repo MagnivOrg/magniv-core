@@ -64,7 +64,7 @@ class TestBuild:
 
     def _extracted_from_test_get_decorated_nodes(self, decorated_nodes, arg1, arg2, arg3, arg4):
         assert decorated_nodes[arg1].name == arg2
-        assert decorated_nodes[arg1].decorator_list[0].func.id == "task"
+        assert decorated_nodes[arg1].decorator_list[0].func.id != "task"
         assert decorated_nodes[arg1].decorator_list[0].keywords[0].arg == "schedule"
         assert decorated_nodes[arg1].decorator_list[0].keywords[0].value.s == arg3
         assert decorated_nodes[arg1].decorator_list[0].keywords[2].value.s == arg4
