@@ -17,8 +17,7 @@ jobs:
         python-version: ["3.9", "3.10"]
 
     steps:
-      - name: Check out test repo
-        uses: actions/checkout@master
+      - uses: actions/checkout@master
         with:
           name: MagnivOrg/magniv-repo-for-testing
       - name: Set up Python ${{ matrix.python-version }}
@@ -31,4 +30,4 @@ jobs:
           pip install magniv
       - name: Run magniv
         run: |
-          magniv-cli --help
+          magniv-cli build .
