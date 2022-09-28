@@ -30,4 +30,4 @@ jobs:
           pip install magniv
       - name: Run magniv
         run: |
-          magniv-cli build .
+          magniv-cli build
