@@ -17,7 +17,10 @@ jobs:
         python-version: ["3.9", "3.10"]
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out test repo
+        uses: actions/checkout@master
+        with:
+          name: MagnivOrg/magniv-repo-for-testing
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
         with:
