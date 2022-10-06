@@ -158,50 +158,7 @@ def get_magniv_tasks(
       req (str): The requirement file that is being parsed.
       used_keys (Dict): A dictionary of keys that have been used in the file.
     """
-    tasks = []
-    for node in decorated_nodes:
-        core_values = {
-            "location": filepath,
-            "python_version": _get_python_version(root),
-            "owner": _get_owner(root),
-            "requirements_location": req,
-            "line_number": node.lineno,
-            "description": None,
-        }
-        for decorator in node.decorator_list:
-            if hasattr(decorator, "func"):
-                decorator_name = _get_decorator_name(decorator.func)
-                if decorator_name not in decorator_aliases:
-                    continue
-
-                constructed_decorator_values = {}
-                for kw in decorator.keywords:
-                    constructed_decorator_values[kw.arg] = _extract_task_kwarg_value(kw, node.name)
-                try:
-                    dummy_function = lambda x: None
-                    dummy_function.__name__ = node.name
-                    task = Task(dummy_function, **constructed_decorator_values)
-                    decorator_values = task.as_dict()
-                except Exception as e:
-                    raise Exception(
-                        f"Building the task {node.name} in {core_values['location']} on line {core_values['line_number']} raised the following {type(e).__name__}: {e}"
-                    )
-
-                info = {**core_values, **decorator_values}
-                if missing_reqs := list({"schedule"} - set(info)):
-                    raise ValueError(
-                        "Task missing required variables, please resolve by defining ("
-                        + ",".join([f" {x} " for x in missing_reqs])
-                        + f') in the task decorator for function {info["name"]} at {info["location"]} line {info["line_number"]}'
-                    )
-                if info["key"] in used_keys:
-                    raise ValueError(
-                        f'Task "{info["key"]}" in file {filepath} is using "{info["key"]}" as a key which is already used in {used_keys[info["key"]]}, please resolve by changing one of the keys'
-                    )
-                used_keys[info["key"]] = filepath
-                tasks.append(info)
-
-    return tasks
+    return "THIS IS DEFINITELY A BUG"
 
 
 def get_task_files(task_folder: str) -> List:
