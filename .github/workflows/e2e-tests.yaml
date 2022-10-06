@@ -17,20 +17,19 @@ jobs:
         python-version: ["3.9", "3.10"]
 
     steps:
-      - uses: actions/checkout@master
-        with:
-          repository: MagnivOrg/magniv-repo-for-testing
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-      - name: working directory
-        run: |
-          ls
-      - name: Install dependencies
+      - name: Install magniv from branch
         run: |
           python -m pip install --upgrade pip
           pip install magniv
+      - name: Checkout testing repo
+        uses: actions/checkout@master
+        with:
+          repository: MagnivOrg/magniv-repo-for-testing
       - name: Magniv build
         run: |
           magniv-cli build
