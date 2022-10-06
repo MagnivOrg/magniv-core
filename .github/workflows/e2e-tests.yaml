@@ -25,7 +25,7 @@ jobs:
       - name: Install magniv from branch
         run: |
           python -m pip install --upgrade pip
-          pip install magniv
+          pip install .
       - name: Checkout testing repo
         uses: actions/checkout@master
         with:
