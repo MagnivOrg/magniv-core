@@ -1,17 +1,6 @@
-import ast
-import os
-from typing import Union
-
 import pytest
 
-from magniv.build.build import (
-    build,
-    get_decorated_nodes,
-    get_magniv_tasks,
-    get_task_files,
-    get_task_list,
-    save_tasks,
-)
+from magniv.build.build import build
 
 TEST_FILE = """from datetime import datetime
 
@@ -27,20 +16,12 @@ if __name__ == "__main__":
 """
 
 
-class TestBuild:
-    @pytest.fixture
-    def file(self, tmpdir):
-        tmpdir.mkdir("tasks").join("main.py").write(TEST_FILE)
-        tmpdir.join("tasks/requirements.txt").write("magniv")
-        return str(tmpdir.join("tasks"))
+@pytest.fixture
+def file(tmpdir):
+    tmpdir.mkdir("tasks").join("main.py").write(TEST_FILE)
+    tmpdir.join("tasks/requirements.txt").write("magniv")
+    return str(tmpdir.join("tasks"))
 
-    def test_build(self, file):
-        """
-        `build` is a function that takes a filepath and a task_folder argument and saves all the tasks
-        in that folder to a file
-
-        :param file: a filepath to a Python file
-        """
-        json_pth = f"{file}/dump.json"
-        with pytest.raises(ValueError):
-            build(task_folder=file)
+def test_invalid_kwarg_raises_error_on_build(file):
+    with pytest.raises(ValueError):
+        build(task_folder=file)
