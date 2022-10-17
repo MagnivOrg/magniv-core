@@ -34,6 +34,7 @@ def file(tmpdir):
     tmpdir.join("tasks/requirements.txt").write("magniv")
     return str(tmpdir.join("tasks"))
 
+
 def test_invalid_kwarg_raises_error_on_build(file):
     with pytest.raises(ValueError):
         build(task_folder=file)

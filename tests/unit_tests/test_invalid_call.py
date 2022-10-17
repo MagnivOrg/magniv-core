@@ -24,7 +24,6 @@ if __name__ == "__main__":
 """
 
 
-
 @pytest.fixture
 def file(tmpdir):
     """
@@ -42,6 +41,7 @@ def file(tmpdir):
     tmpdir.mkdir("tasks").join("main.py").write(TEST_FILE)
     tmpdir.join("tasks/requirements.txt").write("magniv")
     return str(tmpdir.join("tasks"))
+
 
 def test_invalid_task_key_raises_error_on_build(file):
     with pytest.raises(ValueError):

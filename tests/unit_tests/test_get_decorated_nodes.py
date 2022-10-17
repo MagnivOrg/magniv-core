@@ -55,6 +55,7 @@ def file(tmpdir):
     tmpdir.join("tasks/requirements.txt").write("magniv")
     return str(tmpdir.join("tasks"))
 
+
 def get_ast(file) -> Union[ast.AST, str]:
     """
     It opens a file, reads it, and parses it into an AST
@@ -64,14 +65,16 @@ def get_ast(file) -> Union[ast.AST, str]:
         parsed_ast = ast.parse(f.read())
     return parsed_ast
 
+
 def test_get_decorated_nodes_returns_all_magniv_aliases(file):
     parsed_ast = get_ast(file)
     nodes, aliases = get_decorated_nodes(parsed_ast)
-    assert 'magniv.core.task' in aliases
-    assert 'task' in aliases
-    assert 'mc.task' in aliases
+    assert "magniv.core.task" in aliases
+    assert "task" in aliases
+    assert "mc.task" in aliases
+
 
 def test_get_decorated_nodes_ignores_non_magniv_decorators(file):
     parsed_ast = get_ast(file)
     nodes, aliases = get_decorated_nodes(parsed_ast)
-    assert 'dummydecorator' not in aliases
+    assert "dummydecorator" not in aliases
