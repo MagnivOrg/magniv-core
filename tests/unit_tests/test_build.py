@@ -3,7 +3,6 @@ import os
 from typing import Union
 
 import pytest
-
 from magniv.build.build import (
     build,
     get_decorated_nodes,

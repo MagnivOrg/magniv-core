@@ -1,5 +1,4 @@
 import pytest
-
 from magniv.build.build import build
 
 TEST_FILE = """from datetime import datetime
