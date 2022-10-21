@@ -5,7 +5,6 @@ import pytest
 
 from magniv.build.build import get_decorated_nodes
 from tests.unit_tests.fixtures.test_files import GET_DECORATED_NODES_FILE
-from tests.unit_tests.test_invalid_build import TestBuildInvalid
 
 
 class TestDecoratedNodes:
