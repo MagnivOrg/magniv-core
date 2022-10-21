@@ -1,7 +1,7 @@
-from fixtures.test_files import INVALID_KWARG_FILE, INVALID_TASK_KEY_FILE, INVALID_TRIGGER_FILE
 import pytest
-
 from magniv.build.build import build
+
+from fixtures.test_files import INVALID_KWARG_FILE, INVALID_TASK_KEY_FILE, INVALID_TRIGGER_FILE
 
 # TODO: merge with TestBuild upon refactor there
 
