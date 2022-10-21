@@ -2,6 +2,7 @@ import ast
 from typing import Union
 
 import pytest
+
 from magniv.build.build import get_decorated_nodes
 
 TEST_FILE = """from datetime import datetime
