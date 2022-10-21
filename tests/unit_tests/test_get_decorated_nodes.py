@@ -1,7 +1,6 @@
 import ast
-from typing import Union
-
 import pytest
+from typing import Union
 
 from magniv.build.build import get_decorated_nodes
 
