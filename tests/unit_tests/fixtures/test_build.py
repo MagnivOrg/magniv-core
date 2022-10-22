@@ -1,5 +1,6 @@
 import pytest
 
+
 class TestBuild:
     @pytest.fixture
     def folder(self, tmp_path, file):
@@ -17,5 +18,5 @@ class TestBuild:
 
     @pytest.fixture
     def file(self):
-       """Method stub for test file"""
-       pass
+        """Method stub for test file"""
+        pass

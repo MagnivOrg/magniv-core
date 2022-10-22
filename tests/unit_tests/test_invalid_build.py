@@ -10,6 +10,7 @@ from tests.unit_tests.fixtures.test_files import (
 
 # TODO: merge with test_build file upon refactor there
 
+
 class TestBuildInvalidKwarg(TestBuild):
     @pytest.fixture
     def file(self):
