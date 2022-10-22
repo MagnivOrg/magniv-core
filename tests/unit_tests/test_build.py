@@ -54,6 +54,7 @@ if __name__ == "__main__":
     hello_world()
 """
 
+#FIXME: make this use base class from fixtures dir
 
 class TestBuild:
     @pytest.fixture

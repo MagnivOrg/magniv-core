@@ -1,7 +1,7 @@
 import pytest
 
 from magniv.build.build import build
-from tests.unit_tests.fixtures.test_build import TestBuildInvalid
+from tests.unit_tests.fixtures.test_build import TestBuild
 from tests.unit_tests.fixtures.test_files import (
     INVALID_KWARG_FILE,
     INVALID_TASK_KEY_FILE,
@@ -9,7 +9,7 @@ from tests.unit_tests.fixtures.test_files import (
 )
 
 
-class TestBuildInvalidKwarg(TestBuildInvalid):
+class TestBuildInvalidKwarg(TestBuild):
     @pytest.fixture
     def file(self):
         return INVALID_KWARG_FILE
@@ -19,7 +19,7 @@ class TestBuildInvalidKwarg(TestBuildInvalid):
             build(task_folder=folder)
 
 
-class TestBuildInvalidTaskKey(TestBuildInvalid):
+class TestBuildInvalidTaskKey(TestBuild):
     @pytest.fixture
     def file(self):
         return INVALID_TASK_KEY_FILE
@@ -29,7 +29,7 @@ class TestBuildInvalidTaskKey(TestBuildInvalid):
             build(task_folder=folder)
 
 
-class TestBuildInvalidTrigger(TestBuildInvalid):
+class TestBuildInvalidTrigger(TestBuild):
     @pytest.fixture
     def file(self):
         return INVALID_TRIGGER_FILE

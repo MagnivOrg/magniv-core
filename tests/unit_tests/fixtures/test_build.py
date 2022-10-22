@@ -1,6 +1,6 @@
 import pytest
 
-class TestBuildInvalid:
+class TestBuild:
     @pytest.fixture
     def folder(self, tmpdir, file):
         tmpdir.mkdir("tasks").join("main.py").write(file)
