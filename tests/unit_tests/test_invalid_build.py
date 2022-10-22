@@ -8,6 +8,7 @@ from tests.unit_tests.fixtures.test_files import (
     INVALID_TRIGGER_FILE,
 )
 
+# TODO: merge with test_build file upon refactor there
 
 class TestBuildInvalidKwarg(TestBuild):
     @pytest.fixture
