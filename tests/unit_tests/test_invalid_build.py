@@ -19,7 +19,7 @@ class TestBuildInvalid:
 
 
 class TestBuildInvalidKwarg(TestBuildInvalid):
-    @pytest.fixture(scope="class")
+    @pytest.fixture
     def file(self):
         return INVALID_KWARG_FILE
 
@@ -29,7 +29,7 @@ class TestBuildInvalidKwarg(TestBuildInvalid):
 
 
 class TestBuildInvalidTaskKey(TestBuildInvalid):
-    @pytest.fixture(scope="class")
+    @pytest.fixture
     def file(self):
         return INVALID_TASK_KEY_FILE
 
@@ -39,7 +39,7 @@ class TestBuildInvalidTaskKey(TestBuildInvalid):
 
 
 class TestBuildInvalidTrigger(TestBuildInvalid):
-    @pytest.fixture(scope="class")
+    @pytest.fixture
     def file(self):
         return INVALID_TRIGGER_FILE
 
