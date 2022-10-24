@@ -5,7 +5,7 @@ from tests.unit_tests.fixtures.test_build import TestBuild
 from tests.unit_tests.fixtures.test_files import GET_DECORATED_NODES_FILE
 
 
-class TestDecoratedNodes(TestBuild):
+class TestGetDecoratedNodes(TestBuild):
 
     @pytest.fixture
     def file(self):
