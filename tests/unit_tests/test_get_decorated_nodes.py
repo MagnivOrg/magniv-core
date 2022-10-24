@@ -9,6 +9,7 @@ class TestGetDecoratedNodes(TestBuild):
 
     @pytest.fixture
     def file(self):
+        """returns a file that contains multiple types of valid decorators"""
         return GET_DECORATED_NODES_FILE
 
     def test_get_decorated_nodes_returns_all_magniv_aliases(self, ast):
