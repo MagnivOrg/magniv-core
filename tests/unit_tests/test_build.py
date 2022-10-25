@@ -31,6 +31,8 @@ class TestValidBuild(TestBuild):
         build_result = build(task_folder=folder)
         assert os.path.exists(expected_json_path)
 
+    # TODO: isolate tasklist oriented tests in a separate class or file
+
     def test_get_magniv_tasks(self, folder, ast):
         decorated_nodes, decorator_aliases = get_decorated_nodes(ast)
         used_keys = {}
