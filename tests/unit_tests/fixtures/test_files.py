@@ -83,7 +83,7 @@ if __name__ == "__main__":
     hello_world()
 """
 
-VALID_TEST_FILE =  """from datetime import datetime
+VALID_TEST_FILE = """from datetime import datetime
 
 from magniv.core import task
 

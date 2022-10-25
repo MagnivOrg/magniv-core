@@ -1,10 +1,10 @@
-import pytest
-
 import ast
 from typing import Union
 
-class TestBuild:
+import pytest
 
+
+class TestBuild:
     @pytest.fixture
     def file(self) -> str:
         """Must be implemented in subclass definition to return a test file as a string"""

@@ -4,9 +4,6 @@ from typing import Union
 
 import pytest
 
-from tests.unit_tests.fixtures.test_build import TestBuild
-from tests.unit_tests.fixtures.test_files import VALID_TEST_FILE
-
 from magniv.build.build import (
     build,
     get_decorated_nodes,
@@ -15,13 +12,13 @@ from magniv.build.build import (
     get_task_list,
     save_tasks,
 )
-
+from tests.unit_tests.fixtures.test_build import TestBuild
+from tests.unit_tests.fixtures.test_files import VALID_TEST_FILE
 
 # FIXME: make this use base class from fixtures dir
 
 
 class TestValidBuild(TestBuild):
-
     @pytest.fixture
     def file(self):
         return VALID_TEST_FILE
@@ -82,7 +79,6 @@ class TestValidBuild(TestBuild):
         expected_dump_json_path = f"{folder}/dump.json"
         save_tasks(task_folder=folder, dump_save_pth=expected_dump_json_path)
         assert os.path.exists(expected_dump_json_path) is True
-
 
     def test_reqs_dependency(self):
         """

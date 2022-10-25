@@ -8,6 +8,7 @@ from tests.unit_tests.fixtures.test_files import (
     INVALID_TRIGGER_FILE,
 )
 
+
 class TestInvalidBuild(TestBuild):
 
     INVALID_TEST_FILE_LIST = [INVALID_KWARG_FILE, INVALID_TASK_KEY_FILE, INVALID_TRIGGER_FILE]

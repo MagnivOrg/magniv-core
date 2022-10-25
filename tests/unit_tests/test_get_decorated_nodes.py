@@ -6,7 +6,6 @@ from tests.unit_tests.fixtures.test_files import GET_DECORATED_NODES_FILE
 
 
 class TestGetDecoratedNodes(TestBuild):
-
     @pytest.fixture
     def file(self):
         """returns a file that contains multiple types of valid decorators"""
