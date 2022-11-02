@@ -1,16 +1,15 @@
-import ast
-from typing import Union
-
 import pytest
 
 from magniv.build.build import get_decorated_nodes
+from tests.unit_tests.fixtures.test_build import TestBuild
 from tests.unit_tests.fixtures.test_files import GET_DECORATED_NODES_FILE
 
 
-class TestDecoratedNodes:
+class TestGetDecoratedNodes(TestBuild):
     @pytest.fixture
-    def ast(self) -> Union[ast.AST, str]:
-        return ast.parse(GET_DECORATED_NODES_FILE)
+    def file(self):
+        """returns a file that contains multiple types of valid decorators"""
+        return GET_DECORATED_NODES_FILE
 
     def test_get_decorated_nodes_returns_all_magniv_aliases(self, ast):
         nodes, aliases = get_decorated_nodes(ast)

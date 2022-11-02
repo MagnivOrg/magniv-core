@@ -8,33 +8,18 @@ from tests.unit_tests.fixtures.test_files import (
     INVALID_TRIGGER_FILE,
 )
 
-# TODO: merge with test_build file upon refactor there
 
+class TestInvalidBuild(TestBuild):
 
-class TestBuildInvalidKwarg(TestBuild):
-    @pytest.fixture
-    def file(self):
-        return INVALID_KWARG_FILE
+    INVALID_TEST_FILE_LIST = [INVALID_KWARG_FILE, INVALID_TASK_KEY_FILE, INVALID_TRIGGER_FILE]
 
-    def test_invalid_build_raises_error(self, folder):
-        with pytest.raises(ValueError):
-            build(task_folder=folder)
-
-
-class TestBuildInvalidTaskKey(TestBuild):
-    @pytest.fixture
-    def file(self):
-        return INVALID_TASK_KEY_FILE
-
-    def test_invalid_build_raises_error(self, folder):
-        with pytest.raises(ValueError):
-            build(task_folder=folder)
-
-
-class TestBuildInvalidTrigger(TestBuild):
-    @pytest.fixture
-    def file(self):
-        return INVALID_TRIGGER_FILE
+    @pytest.fixture(params=INVALID_TEST_FILE_LIST)
+    def file(self, request):
+        """
+        Returns various invalid test files that are expected to fail when built.
+        Add a file to above list to have it used for input to an instance of the test below
+        """
+        return request.param
 
     def test_invalid_build_raises_error(self, folder):
         with pytest.raises(ValueError):

@@ -1,7 +1,15 @@
+import ast
+from typing import Union
+
 import pytest
 
 
 class TestBuild:
+    @pytest.fixture
+    def file(self) -> str:
+        """Must be implemented in subclass definition to return a test file as a string"""
+        return ""
+
     @pytest.fixture
     def folder(self, tmp_path, file):
         """Uses the pytest builtin fixture tmp_path to create a temporary tasks folder and requirements.txt for each test invocation"""
@@ -17,6 +25,5 @@ class TestBuild:
         return str(tasks_folder)
 
     @pytest.fixture
-    def file(self):
-        """Method stub for test file"""
-        pass
+    def ast(self, file) -> Union[ast.AST, str]:
+        return ast.parse(file)
