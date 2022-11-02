@@ -30,6 +30,25 @@ class TestValidBuild(TestBuild):
 
     # TODO: isolate tasklist oriented tests in a separate class or file
 
+    def test_get_magniv_tasks(self, folder, ast):
+        decorated_nodes, decorator_aliases = get_decorated_nodes(ast)
+        used_keys = {}
+        tasks = get_magniv_tasks(
+            folder,
+            decorated_nodes,
+            decorator_aliases,
+            root="tests/unit_tests",
+            req="requirements.txt",
+            used_keys=used_keys,
+        )
+        assert tasks[0]["name"] == "hello_world"
+        assert tasks[0]["schedule"] == "@hourly"
+        assert tasks[0]["location"] == folder
+        assert tasks[0]["requirements_location"] == "requirements.txt"
+        assert tasks[0]["description"] == "Hello world, printing the time"
+        assert used_keys["goodbye_world_1"] == folder
+        assert used_keys["goodbye_world_2"] == folder
+
     def test_get_tasklist(self, folder):
         """
         It takes a filepath, parses the file, finds all the decorated functions, and returns a list of
