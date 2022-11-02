@@ -69,30 +69,6 @@ class TestValidBuild(TestBuild):
         with pytest.raises(OSError):
             save_tasks(task_folder="")
 
-    @pytest.fixture
-    def subdir_reqs_file(self, tmpdir):
-        """
-        It creates a directory structure with a requirements.txt file in it
-
-        :param tmpdir: This is a pytest fixture that creates a temporary directory for us to use
-        :return: The path to the requirements.txt file.
-        """
-        tmpdir.mkdir("tasks").mkdir("subdir").mkdir("subsubdir").join("requirements.txt").write(
-            "magniv"
-        )
-        return str(tmpdir.join("tasks/subdir/subsubdir"))
-
-    def test_subdirreqs_filepath(self, subdir_reqs_file):
-        """
-        `save_tasks` is a function that takes a folder path as an argument and saves all the tasks in
-        that folder to a file
-
-        :param subdir_reqs_file: a filepath to a requirements.txt file in a subdirectory
-        """
-        json_pth = f"{subdir_reqs_file}/dump.json"
-        save_tasks(task_folder=subdir_reqs_file, dump_save_pth=json_pth)
-        assert os.path.exists(json_pth) == True
-
     def test_task_builds_with_valid_custom_resources(self, folder):
         task_list = get_task_list([{"filepath": f"{folder}/main.py", "req": None}])
         for task in task_list:
