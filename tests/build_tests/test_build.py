@@ -15,8 +15,6 @@ from magniv.build.build import (
 from tests.build_tests.fixtures.test_build import TestBuild
 from tests.build_tests.fixtures.test_files import VALID_TEST_FILE
 
-# FIXME: make this use base class from fixtures dir
-
 
 class TestValidBuild(TestBuild):
     @pytest.fixture
