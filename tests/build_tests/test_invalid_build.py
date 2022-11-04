@@ -1,8 +1,8 @@
 import pytest
 
 from magniv.build.build import build
-from tests.unit_tests.fixtures.test_build import TestBuild
-from tests.unit_tests.fixtures.test_files import (
+from tests.build_tests.fixtures.test_build import TestBuild
+from tests.build_tests.fixtures.test_files import (
     INVALID_KWARG_FILE,
     INVALID_TASK_KEY_FILE,
     INVALID_TRIGGER_FILE,
